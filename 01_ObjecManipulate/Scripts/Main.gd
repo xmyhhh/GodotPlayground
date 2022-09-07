@@ -1,10 +1,7 @@
 extends Spatial
 
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
+var toolScript = load("res://01_ObjecManipulate/Scripts/utils/editorTool.gd")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
