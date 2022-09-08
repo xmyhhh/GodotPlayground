@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://01_ObjecManipulate/Scripts/core/common/ManeuverableObject.gd" type="Script" id=1]
+[ext_resource path="res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateableObject.gd" type="Script" id=1]
 [ext_resource path="res://01_ObjecManipulate/Scripts/Main.gd" type="Script" id=2]
+[ext_resource path="res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateSession.gd" type="Script" id=3]
 
 [sub_resource type="CubeMesh" id=1]
 size = Vector3( 20, 1, 20 )
@@ -28,6 +29,7 @@ shape = SubResource( 2 )
 transform = Transform( -0.72049, 0.273518, -0.637246, 0.037079, 0.93281, 0.358457, 0.692474, 0.234636, -0.682222, -2.44519, 3.01271, -4.21795 )
 
 [node name="Objects" type="Spatial" parent="."]
+script = ExtResource( 3 )
 
 [node name="Obj0" type="Spatial" parent="Objects"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62301, 0 )
