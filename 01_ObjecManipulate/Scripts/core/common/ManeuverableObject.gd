@@ -29,14 +29,7 @@ func _ready():
 func OnManipulateStartCallback():
 	manipulate3DGUIRootNode = Spatial.new()
 	add_child(manipulate3DGUIRootNode)
-	var depth = collisonMaxPoint.z - collisonMinPoint.z
-	var width = collisonMaxPoint.x - collisonMinPoint.x
-	var height = collisonMaxPoint.y - collisonMinPoint.y
-	var cube = CubeMesh.new()
-	cube.size = Vector3(width, height, depth)
-	var meshInst = MeshInstance.new()
-	manipulate3DGUIRootNode.add_child(meshInst)
-	meshInst.mesh = cube
+	manipulate3DGUIRootNode.add_child(BoundingBoxGen())
 	
 func OnManipulateEndCallback():
 	manipulate3DGUIRootNode.queue_free()
@@ -64,6 +57,29 @@ func InitCollisonBoxPoint(collisionNodeArray:Array):
 					collisonMaxPoint = compareTarget
 				elif(not Vec3Compare(collisonMinPoint, compareTarget)):
 					collisonMinPoint = compareTarget
+
+func BoundingBoxGen():
+	var boundingBoxRoot = Spatial.new()
+	var depth = collisonMaxPoint.z - collisonMinPoint.z
+	var width = collisonMaxPoint.x - collisonMinPoint.x
+	var height = collisonMaxPoint.y - collisonMinPoint.y
+	var boxSize = Vector3(width, height, depth) / 2
+	#Step 1: 12 edge gen
+	for i in range(12):
+		var meshInst = editorRoot.edgePrefab.instance()
+		boundingBoxRoot.add_child(meshInst)
+		meshInst.transform.origin = editorRoot.eadgTrans[2 * i] * boxSize
+		meshInst.transform.basis = Basis(editorRoot.eadgTrans[2 * i + 1])
+	#Step 2: 8 horn gen
+	for i in range(8):
+		var meshInst = editorRoot.hornPrefab.instance()
+		boundingBoxRoot.add_child(meshInst)
+		meshInst.transform.origin = editorRoot.hornTrans[2 * i] * boxSize
+		meshInst.transform.basis = Basis(editorRoot.hornTrans[2 * i + 1])
+#	manipulate3DGUIRootNode.add_child(meshInst)
+#	meshInst.mesh = cube
+	return boundingBoxRoot
+	pass
 
 #endregion
 
