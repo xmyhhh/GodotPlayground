@@ -1,28 +1,41 @@
 extends Spatial
+signal ManipulateStart
+signal ManipulateEnd
 
+enum ManipulateActionType {Position, Rotation, Scale}
 
 
 onready var editorRoot =  get_tree().get_root().find_node("EditorRoot", true, false)
 onready var delayInit = true   #Reduce initialization burden
+
+
 var meshNode = null
 var physicsBodyNode = null
 var collisonNodeArray = null
-
+var manipulateActionArray = [ManipulateActionType.Position]
 
 var manipulate3DGUIRootNode
 var collisonMaxPoint = null
 var collisonMinPoint = null
+
+var objInit = false
 #region Godot Callback
 func _ready():
-	
+	set_meta("ManipulateableObject", true)
 	if(not delayInit):
 		InitObject()
+		
+func _get_property_list():
+	var dic
+	return 
+
 #endregion
-
-
 
 #region Public Method
 func InitObject():
+	if(objInit):
+		return
+	objInit = true
 	meshNode = editorRoot.toolScript.FindOneNodeByType(self, "MeshInstance")
 	physicsBodyNode = editorRoot.toolScript.FindOneNodeByType(self, "PhysicsBody")
 	collisonNodeArray = editorRoot.toolScript.FindMultiNodeByType(physicsBodyNode, "CollisionShape")
@@ -32,13 +45,14 @@ func InitObject():
 	InitCollisonBoxPoint(collisonNodeArray)
 #endregion
 
-#region Event Callback
-func OnManipulateStartCallback():
+#region Event Handle
+func OnManipulateStart():
+	InitObject()
 	manipulate3DGUIRootNode = Spatial.new()
 	add_child(manipulate3DGUIRootNode)
 	manipulate3DGUIRootNode.add_child(BoundingBoxGen())
 	
-func OnManipulateEndCallback():
+func OnManipulateEnd():
 	manipulate3DGUIRootNode.queue_free()
 #endregion
 

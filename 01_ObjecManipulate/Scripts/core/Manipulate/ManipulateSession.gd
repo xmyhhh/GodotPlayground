@@ -27,8 +27,28 @@ func InputEventProcess(inputPos):
 	rayEnd = rayOrigin + currentCamera.project_ray_normal(inputPos) * manipulateMaxDistance
 	var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd)
 	if not intersection.empty():
+		var intersectionObjRoot = TryGetIntersectionObjRoot(intersection.collider)
+		if(intersectionObjRoot != null):
+			intersectionObjRoot.OnManipulateStart()
+			
 		pass
 	
 func _physics_process(delta):
 	pass
+#endregion
+
+
+#region Internal Method
+func HandleManipulationStarted():
+	pass
+	
+func HandleManipulationEnded():
+	pass
+	
+func TryGetIntersectionObjRoot(collider):
+	if(collider.get_parent().has_meta("ManipulateableObject")):
+		return collider.get_parent()
+	if(collider.get_parent().get_parent().has_meta("ManipulateableObject")):
+		return collider.get_parent().get_parent()
+	return null
 #endregion
