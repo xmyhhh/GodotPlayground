@@ -7,7 +7,7 @@ export var enableMouseInput = true #for debug use
 var SessionEnable = true
 var rayOrigin:Vector3
 var rayEnd:Vector3
-
+var currentManipulateObj = null
 	
 
 #region Godot Callback 
@@ -26,12 +26,14 @@ func InputEventProcess(inputPos):
 	rayOrigin = currentCamera.project_ray_origin(inputPos)
 	rayEnd = rayOrigin + currentCamera.project_ray_normal(inputPos) * manipulateMaxDistance
 	var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd)
-	if not intersection.empty():
+	if not intersection.empty() :
 		var intersectionObjRoot = TryGetIntersectionObjRoot(intersection.collider)
 		if(intersectionObjRoot != null):
+			if(currentManipulateObj != null and currentManipulateObj!=intersectionObjRoot):
+				currentManipulateObj.OnManipulateEnd()
+			currentManipulateObj = intersectionObjRoot
 			intersectionObjRoot.OnManipulateStart()
-			
-		pass
+
 	
 func _physics_process(delta):
 	pass

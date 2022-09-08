@@ -19,16 +19,14 @@ var collisonMaxPoint = null
 var collisonMinPoint = null
 
 var objInit = false
+var errorObj = false
+var isManipulating = false
+
 #region Godot Callback
 func _ready():
 	set_meta("ManipulateableObject", true)
 	if(not delayInit):
 		InitObject()
-		
-func _get_property_list():
-	var dic
-	return 
-
 #endregion
 
 #region Public Method
@@ -47,12 +45,22 @@ func InitObject():
 
 #region Event Handle
 func OnManipulateStart():
+	if(errorObj or isManipulating):
+		return
 	InitObject()
+	isManipulating = true
 	manipulate3DGUIRootNode = Spatial.new()
-	add_child(manipulate3DGUIRootNode)
-	manipulate3DGUIRootNode.add_child(BoundingBoxGen())
-	
+	physicsBodyNode.add_child(manipulate3DGUIRootNode)
+	var depth = collisonMaxPoint.z - collisonMinPoint.z
+	var width = collisonMaxPoint.x - collisonMinPoint.x
+	var height = collisonMaxPoint.y - collisonMinPoint.y
+	var center = (collisonMaxPoint - collisonMinPoint) / 2 + collisonMinPoint
+	manipulate3DGUIRootNode.add_child(BoundingBoxGen(depth,width,height))
+	manipulate3DGUIRootNode.transform.origin = center
 func OnManipulateEnd():
+	if(errorObj or not isManipulating):
+		return
+	isManipulating = false
 	manipulate3DGUIRootNode.queue_free()
 #endregion
 
@@ -75,11 +83,9 @@ func InitCollisonBoxPoint(collisionNodeArray:Array):
 				elif(not Vec3Compare(collisonMinPoint, compareTarget)):
 					collisonMinPoint = compareTarget
 
-func BoundingBoxGen():
+func BoundingBoxGen(depth, width, height):
 	var boundingBoxRoot = Spatial.new()
-	var depth = collisonMaxPoint.z - collisonMinPoint.z
-	var width = collisonMaxPoint.x - collisonMinPoint.x
-	var height = collisonMaxPoint.y - collisonMinPoint.y
+	
 	var boxSize = Vector3(width, height, depth) / 2
 	#Step 1: 12 edge gen
 	for i in range(12):
