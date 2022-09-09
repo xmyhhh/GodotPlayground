@@ -1,12 +1,38 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://01_ObjecManipulate/models/horn.glb" type="PackedScene" id=1]
+[ext_resource path="res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateHandle.gd" type="Script" id=2]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_color = Color( 0, 0.858824, 1, 1 )
 
+[sub_resource type="BoxShape" id=2]
+extents = Vector3( 0.52885, 0.0705118, 0.0738345 )
+
+[sub_resource type="BoxShape" id=3]
+extents = Vector3( 0.0682815, 0.0861955, 0.519779 )
+
+[sub_resource type="BoxShape" id=4]
+extents = Vector3( 0.082482, 0.530203, 0.0770881 )
+
 [node name="horn" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
 
 [node name="shl_adjustBoxScaleWidget_16mmx2mm" parent="." index="0"]
 transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
 material/0 = SubResource( 1 )
+
+[node name="Area" type="Area" parent="shl_adjustBoxScaleWidget_16mmx2mm" index="0"]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="shl_adjustBoxScaleWidget_16mmx2mm/Area" index="0"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.430755, 0, 0 )
+shape = SubResource( 2 )
+
+[node name="CollisionShape2" type="CollisionShape" parent="shl_adjustBoxScaleWidget_16mmx2mm/Area" index="1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.433666 )
+shape = SubResource( 3 )
+
+[node name="CollisionShape3" type="CollisionShape" parent="shl_adjustBoxScaleWidget_16mmx2mm/Area" index="2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.433666, 0 )
+shape = SubResource( 4 )

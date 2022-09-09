@@ -3,30 +3,45 @@ signal ManipulateStart
 signal ManipulateEnd
 
 enum ManipulateActionType {Position, Rotation, Scale}
-
+enum ManipulateDirectionType {XAsix, YAsix, ZAsix}
 
 onready var editorRoot =  get_tree().get_root().find_node("EditorRoot", true, false)
 onready var delayInit = true   #Reduce initialization burden
+onready var ManipulateActionDIct  = {
+	"Position" : ["XAsix", "YAsix", "ZAsix"], 
+	"Rotation" : ["XAsix", "YAsix", "ZAsix"],
+	"Scale" : ["XAsix", "YAsix", "ZAsix"]
+}
 
 
 var meshNode = null
 var physicsBodyNode = null
 var collisonNodeArray = null
-var manipulateActionArray = [ManipulateActionType.Position]
 
-var manipulate3DGUIRootNode
+var manipulate3DGUIRootNode = null
 var collisonMaxPoint = null
 var collisonMinPoint = null
+var currentHandleInfo = null
 
 var objInit = false
 var errorObj = false
 var isManipulating = false
-
+var isHandlePressing = false
 #region Godot Callback
 func _ready():
 	set_meta("ManipulateableObject", true)
 	if(not delayInit):
 		InitObject()
+		
+#func _input(event):
+#	if(not isHandlePressing):
+#		return
+		
+#	if event is InputEventScreenTouch and not event.is_pressed():
+#		InputEventProcess(event.position)
+#	elif enableMouseInput and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and not event.pressed:
+#		InputEventProcess(event.position)
+		
 #endregion
 
 #region Public Method
@@ -57,6 +72,16 @@ func OnManipulateStart():
 	var center = (collisonMaxPoint - collisonMinPoint) / 2 + collisonMinPoint
 	manipulate3DGUIRootNode.add_child(BoundingBoxGen(depth,width,height))
 	manipulate3DGUIRootNode.transform.origin = center
+
+
+func OnManipulateHandlePressedCallback(handleInfo):
+	isHandlePressing = true
+	currentHandleInfo = handleInfo
+
+func OnManipulateHandleUnPressedCallback(handleInfo):
+	isHandlePressing = false
+	currentHandleInfo = null
+
 func OnManipulateEnd():
 	if(errorObj or not isManipulating):
 		return
@@ -91,18 +116,31 @@ func BoundingBoxGen(depth, width, height):
 	for i in range(12):
 		var meshInst = editorRoot.edgePrefab.instance()
 		boundingBoxRoot.add_child(meshInst)
+		meshInst.handleInfo.handleIndex = i
+		meshInst.handleInfo.handleType = ManipulateActionType.Rotation
 		meshInst.transform.origin = editorRoot.eadgTrans[2 * i] * boxSize
 		meshInst.transform.basis = Basis(editorRoot.eadgTrans[2 * i + 1])
+		
 	#Step 2: 8 horn gen
 	for i in range(8):
 		var meshInst = editorRoot.hornPrefab.instance()
 		boundingBoxRoot.add_child(meshInst)
+		meshInst.handleInfo.handleIndex = i
+		meshInst.handleInfo.handleType = ManipulateActionType.Scale
 		meshInst.transform.origin = editorRoot.hornTrans[2 * i] * boxSize
 		meshInst.transform.basis = Basis(editorRoot.hornTrans[2 * i + 1])
 #	manipulate3DGUIRootNode.add_child(meshInst)
 #	meshInst.mesh = cube
 	return boundingBoxRoot
+	
+func InputEventProcess(position):
+	pass
 #endregion
+
+
+
+
+
 
 #region Tool Script
 func Vec3Compare(source, target):
