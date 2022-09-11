@@ -30,7 +30,7 @@ material/0 = ExtResource( 5 )
 shape = SubResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 0.00515446, -0.0339602, 0.99941, 0.0217508, 0.999191, 0.0338405, -0.99975, 0.0215635, 0.00588894, 10.1484, 2.64581, 1.65287 )
+transform = Transform( -0.339756, 0, 0.940514, 0, 1, 0, -0.940514, 0, -0.339756, 3.80756, 2.35789, -3.3787 )
 __meta__ = {
 "_edit_group_": true
 }

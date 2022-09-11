@@ -132,20 +132,20 @@ func BoundingBoxGen(depth, width, height):
 
 	#Step 3: 6 face gen(position)
 	var boxFaces = GenerateBoxFace(Vector3(0, 0, 0), boxSizeHalf)
-#	for i in range(6):
-	var i = 2
-	var mesh = boxFaces[i]
-	var meshInst = MeshInstance.new()
-#		var mesh = PlaneMesh.new()
-#		mesh.center_offset = Vector3(0, 0, 0)
-	meshInst.mesh = mesh
+	for i in range(6):
 
-	boundingBoxRoot.add_child(meshInst)
-	meshInst.set_surface_material(0, editorRoot.faceMat)
-	meshInst.set_script(editorRoot.handleScript)
+		var mesh = boxFaces[i]
+		var meshInst = MeshInstance.new()
+	#		var mesh = PlaneMesh.new()
+	#		mesh.center_offset = Vector3(0, 0, 0)
+		meshInst.mesh = mesh
 
-	meshInst.handleInfo.handleIndex = i
-	meshInst.handleInfo.handleType = ManipulateActionType.Position
+		boundingBoxRoot.add_child(meshInst)
+		meshInst.set_surface_material(0, editorRoot.faceMat)
+		meshInst.set_script(editorRoot.handleScript)
+
+		meshInst.handleInfo.handleIndex = i
+		meshInst.handleInfo.handleType = ManipulateActionType.Position
 
 
 
@@ -156,10 +156,6 @@ func InputEventProcess(position):
 #endregion
 
 
-
-
-
-
 #region Tool Script
 func Vec3Compare(source, target):
 	if(source.x <= target.x and source.y <= target.y and source.z <= target.z):
@@ -168,7 +164,7 @@ func Vec3Compare(source, target):
 	
 func GeneratePlane(center:Vector3, halfSize:Vector3):
 	var surfaceTool = SurfaceTool.new()
-	surfaceTool.begin(Mesh.PRIMITIVE_TRIANGLE_STRIP)
+	surfaceTool.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var p0
 	var p1
 	if(halfSize.x == 0):
@@ -185,6 +181,7 @@ func GeneratePlane(center:Vector3, halfSize:Vector3):
 	surfaceTool.add_vertex(center - p0)
 	surfaceTool.add_vertex(center - p1)
 
+	
 	surfaceTool.add_vertex(center + halfSize)
 	surfaceTool.add_vertex(center + p0)
 	surfaceTool.add_vertex(center + p1)
@@ -201,8 +198,8 @@ func GenerateBoxFace(boxCenter:Vector3, boxSizeHalf:Vector3):
 	res.append(GeneratePlane(boxCenter - Vector3(0, boxSizeHalf.y, 0), Vector3(boxSizeHalf.x, 0, boxSizeHalf.z)))
 	res.append(GeneratePlane(boxCenter + Vector3(0, boxSizeHalf.y, 0), Vector3(boxSizeHalf.x, 0, boxSizeHalf.z)))
 
-	res.append(GeneratePlane(boxCenter - Vector3(0, 0, boxSizeHalf.y), Vector3(boxSizeHalf.x, boxSizeHalf.y, 0)))
-	res.append(GeneratePlane(boxCenter + Vector3(0, 0, boxSizeHalf.y), Vector3(boxSizeHalf.x, boxSizeHalf.y, 0)))
+	res.append(GeneratePlane(boxCenter - Vector3(0, 0, boxSizeHalf.z), Vector3(boxSizeHalf.x, boxSizeHalf.y, 0)))
+	res.append(GeneratePlane(boxCenter + Vector3(0, 0, boxSizeHalf.z), Vector3(boxSizeHalf.x, boxSizeHalf.y, 0)))
 
 	return res
 #endregion

@@ -2,7 +2,7 @@
 
 [sub_resource type="Shader" id=5]
 code = "shader_type spatial;
-
+render_mode cull_disabled;
 
 void fragment(){
 	
