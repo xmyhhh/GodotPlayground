@@ -133,11 +133,18 @@ func BoundingBoxGen(depth, width, height):
 	#Step 3: 6 face gen(position)
 	var boxFaces = GenerateBoxFace(Vector3(0, 0, 0), boxSizeHalf)
 	for i in range(6):
-
-		var mesh = boxFaces[i]
+		var mesh = boxFaces[i][0]
+		#make face Area 
 		var meshInst = MeshInstance.new()
-	#		var mesh = PlaneMesh.new()
-	#		mesh.center_offset = Vector3(0, 0, 0)
+		var area = Area.new()
+		var collisionShape = CollisionShape.new()
+		var planeShape = PlaneShape.new()
+		
+		meshInst.add_child(area)
+		area.add_child(collisionShape)
+
+		planeShape.plane =  Plane(boxFaces[i][1][0],boxFaces[i][1][1],boxFaces[i][1][2]) 
+		collisionShape.shape = planeShape
 		meshInst.mesh = mesh
 
 		boundingBoxRoot.add_child(meshInst)
@@ -147,7 +154,8 @@ func BoundingBoxGen(depth, width, height):
 		meshInst.handleInfo.handleIndex = i
 		meshInst.handleInfo.handleType = ManipulateActionType.Position
 
-
+		
+		
 
 	return boundingBoxRoot
 	
@@ -165,29 +173,26 @@ func Vec3Compare(source, target):
 func GeneratePlane(center:Vector3, halfSize:Vector3):
 	var surfaceTool = SurfaceTool.new()
 	surfaceTool.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var p0
-	var p1
+	var p
+
 	if(halfSize.x == 0):
-		p0 = Vector3(0, halfSize.y, -halfSize.z)
-		p1 = Vector3(0, -halfSize.y, halfSize.z)
+		p = Vector3(0, halfSize.y, -halfSize.z)
 	elif(halfSize.y == 0):
-		p0 = Vector3(halfSize.x, 0, -halfSize.z)
-		p1 = Vector3(-halfSize.x, 0, halfSize.z)
+		p = Vector3(halfSize.x, 0, -halfSize.z)
 	else:
-		p0 = Vector3(halfSize.x, -halfSize.y, 0)
-		p1 = Vector3(-halfSize.x, halfSize.y, 0)
-		
+		p = Vector3(halfSize.x, -halfSize.y, 0)
+	
 	surfaceTool.add_vertex(center - halfSize)
-	surfaceTool.add_vertex(center - p0)
-	surfaceTool.add_vertex(center - p1)
+	surfaceTool.add_vertex(center - p)
+	surfaceTool.add_vertex(center + p)
 
-	
 	surfaceTool.add_vertex(center + halfSize)
-	surfaceTool.add_vertex(center + p0)
-	surfaceTool.add_vertex(center + p1)
+	surfaceTool.add_vertex(center - p)
+	surfaceTool.add_vertex(center + p)
 
-	
-	return surfaceTool.commit()
+	var ploygonArray:PoolVector3Array = [(center - halfSize), (center - p), (center + halfSize)]
+	print(ploygonArray)
+	return [surfaceTool.commit(), ploygonArray]
 
 func GenerateBoxFace(boxCenter:Vector3, boxSizeHalf:Vector3):
 	var res = []
@@ -202,4 +207,7 @@ func GenerateBoxFace(boxCenter:Vector3, boxSizeHalf:Vector3):
 	res.append(GeneratePlane(boxCenter + Vector3(0, 0, boxSizeHalf.z), Vector3(boxSizeHalf.x, boxSizeHalf.y, 0)))
 
 	return res
+	
+
+	
 #endregion

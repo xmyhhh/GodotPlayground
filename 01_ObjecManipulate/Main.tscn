@@ -1,9 +1,8 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateableObject.gd" type="Script" id=1]
 [ext_resource path="res://01_ObjecManipulate/Scripts/Main.gd" type="Script" id=2]
 [ext_resource path="res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateSession.gd" type="Script" id=3]
-[ext_resource path="res://01_ObjecManipulate/shaders/BoundingBoxFaceMat.tres" type="Material" id=5]
 
 [sub_resource type="CubeMesh" id=1]
 size = Vector3( 20, 1, 20 )
@@ -19,9 +18,7 @@ extents = Vector3( 10, 0.5, 10 )
 script = ExtResource( 2 )
 
 [node name="Ground" type="MeshInstance" parent="."]
-visible = false
 mesh = SubResource( 1 )
-material/0 = ExtResource( 5 )
 
 [node name="StaticBody" type="StaticBody" parent="Ground"]
 
@@ -29,7 +26,7 @@ material/0 = ExtResource( 5 )
 shape = SubResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( -0.339756, 0, 0.940514, 0, 1, 0, -0.940514, 0, -0.339756, 3.80756, 5.58653, -3.3787 )
+transform = Transform( 0.750529, -0.222733, 0.622171, 0.0242843, 0.950148, 0.310852, -0.660391, -0.218194, 0.718522, 3.16515, 2.30788, 3.6007 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -38,7 +35,7 @@ __meta__ = {
 script = ExtResource( 3 )
 
 [node name="Obj0" type="Spatial" parent="Objects"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.12464, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5126, 0 )
 script = ExtResource( 1 )
 
 [node name="RigidBody" type="RigidBody" parent="Objects/Obj0"]

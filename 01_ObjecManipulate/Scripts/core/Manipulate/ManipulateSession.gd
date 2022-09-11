@@ -39,7 +39,9 @@ func InputEventProcess(inputPos):
 		#Step 2: try get if it is IntersectionHandle
 		var intersectionHandleRoot = TryGetIntersectionHandleRoot(intersection.collider)
 		if(intersectionHandleRoot != null):
+			print("OnManipulateHandlePressedCallback", intersectionHandleRoot.get_path())
 			currentManipulateObj.OnManipulateHandlePressedCallback(intersectionHandleRoot.handleInfo)
+			
 			return
 
 #endregion
@@ -59,6 +61,8 @@ func TryGetIntersectionObjRoot(collider):
 		return collider.get_parent().get_parent()
 	return null
 func TryGetIntersectionHandleRoot(collider):
+	if(collider.get_parent().has_meta("ManipulateableHandle")):
+		return collider.get_parent()
 	if(collider.get_parent().get_parent().has_meta("ManipulateableHandle")):
 		return collider.get_parent().get_parent()
 	return null
