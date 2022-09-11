@@ -3,7 +3,7 @@ extends Spatial
 const PIE = 3.1415926
 const HALF_PIE = 1.5707963
 var toolScript = load("res://01_ObjecManipulate/Scripts/utils/editorTool.gd")
-
+var handleScript = load("res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateHandle.gd")
 
 var edgePrefab = load("res://01_ObjecManipulate/prefabs/edge.tscn")
 var eadgTrans = [
@@ -38,3 +38,4 @@ var hornTrans = [
 	Vector3(-1, -1, -1),   Quat(0.5, 0.5, -0.5, -0.5),
 ]
 
+var faceMat = load("res://01_ObjecManipulate/shaders/BoundingBoxFaceMat.tres")

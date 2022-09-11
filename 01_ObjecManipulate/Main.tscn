@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateableObject.gd" type="Script" id=1]
 [ext_resource path="res://01_ObjecManipulate/Scripts/Main.gd" type="Script" id=2]
 [ext_resource path="res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateSession.gd" type="Script" id=3]
 [ext_resource path="res://01_ObjecManipulate/prefabs/mixer/Mus_Mixer_01.tscn" type="PackedScene" id=4]
+[ext_resource path="res://01_ObjecManipulate/shaders/BoundingBoxFaceMat.tres" type="Material" id=5]
 
 [sub_resource type="CubeMesh" id=1]
 size = Vector3( 20, 1, 20 )
@@ -21,6 +22,7 @@ script = ExtResource( 2 )
 [node name="Ground" type="MeshInstance" parent="."]
 visible = false
 mesh = SubResource( 1 )
+material/0 = ExtResource( 5 )
 
 [node name="StaticBody" type="StaticBody" parent="Ground"]
 

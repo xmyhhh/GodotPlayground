@@ -111,14 +111,14 @@ func InitCollisonBoxPoint(collisionNodeArray:Array):
 func BoundingBoxGen(depth, width, height):
 	var boundingBoxRoot = Spatial.new()
 	
-	var boxSize = Vector3(width, height, depth) / 2
+	var boxSizeHalf = Vector3(width, height, depth) / 2
 	#Step 1: 12 edge gen
 	for i in range(12):
 		var meshInst = editorRoot.edgePrefab.instance()
 		boundingBoxRoot.add_child(meshInst)
 		meshInst.handleInfo.handleIndex = i
 		meshInst.handleInfo.handleType = ManipulateActionType.Rotation
-		meshInst.transform.origin = editorRoot.eadgTrans[2 * i] * boxSize
+		meshInst.transform.origin = editorRoot.eadgTrans[2 * i] * boxSizeHalf
 		meshInst.transform.basis = Basis(editorRoot.eadgTrans[2 * i + 1])
 		
 	#Step 2: 8 horn gen
@@ -127,10 +127,28 @@ func BoundingBoxGen(depth, width, height):
 		boundingBoxRoot.add_child(meshInst)
 		meshInst.handleInfo.handleIndex = i
 		meshInst.handleInfo.handleType = ManipulateActionType.Scale
-		meshInst.transform.origin = editorRoot.hornTrans[2 * i] * boxSize
+		meshInst.transform.origin = editorRoot.hornTrans[2 * i] * boxSizeHalf
 		meshInst.transform.basis = Basis(editorRoot.hornTrans[2 * i + 1])
-#	manipulate3DGUIRootNode.add_child(meshInst)
-#	meshInst.mesh = cube
+
+	#Step 3: 6 face gen(position)
+	var boxFaces = GenerateBoxFace(Vector3(0, 0, 0), boxSizeHalf)
+#	for i in range(6):
+	var i = 2
+	var mesh = boxFaces[i]
+	var meshInst = MeshInstance.new()
+#		var mesh = PlaneMesh.new()
+#		mesh.center_offset = Vector3(0, 0, 0)
+	meshInst.mesh = mesh
+
+	boundingBoxRoot.add_child(meshInst)
+	meshInst.set_surface_material(0, editorRoot.faceMat)
+	meshInst.set_script(editorRoot.handleScript)
+
+	meshInst.handleInfo.handleIndex = i
+	meshInst.handleInfo.handleType = ManipulateActionType.Position
+
+
+
 	return boundingBoxRoot
 	
 func InputEventProcess(position):
@@ -147,4 +165,44 @@ func Vec3Compare(source, target):
 	if(source.x <= target.x and source.y <= target.y and source.z <= target.z):
 		return true
 	return false
+	
+func GeneratePlane(center:Vector3, halfSize:Vector3):
+	var surfaceTool = SurfaceTool.new()
+	surfaceTool.begin(Mesh.PRIMITIVE_TRIANGLE_STRIP)
+	var p0
+	var p1
+	if(halfSize.x == 0):
+		p0 = Vector3(0, halfSize.y, -halfSize.z)
+		p1 = Vector3(0, -halfSize.y, halfSize.z)
+	elif(halfSize.y == 0):
+		p0 = Vector3(halfSize.x, 0, -halfSize.z)
+		p1 = Vector3(-halfSize.x, 0, halfSize.z)
+	else:
+		p0 = Vector3(halfSize.x, -halfSize.y, 0)
+		p1 = Vector3(-halfSize.x, halfSize.y, 0)
+		
+	surfaceTool.add_vertex(center - halfSize)
+	surfaceTool.add_vertex(center - p0)
+	surfaceTool.add_vertex(center - p1)
+
+	surfaceTool.add_vertex(center + halfSize)
+	surfaceTool.add_vertex(center + p0)
+	surfaceTool.add_vertex(center + p1)
+
+	
+	return surfaceTool.commit()
+
+func GenerateBoxFace(boxCenter:Vector3, boxSizeHalf:Vector3):
+	var res = []
+
+	res.append(GeneratePlane(boxCenter - Vector3(boxSizeHalf.x, 0, 0), Vector3(0, boxSizeHalf.y, boxSizeHalf.z)))
+	res.append(GeneratePlane(boxCenter + Vector3(boxSizeHalf.x, 0, 0), Vector3(0, boxSizeHalf.y, boxSizeHalf.z)))
+
+	res.append(GeneratePlane(boxCenter - Vector3(0, boxSizeHalf.y, 0), Vector3(boxSizeHalf.x, 0, boxSizeHalf.z)))
+	res.append(GeneratePlane(boxCenter + Vector3(0, boxSizeHalf.y, 0), Vector3(boxSizeHalf.x, 0, boxSizeHalf.z)))
+
+	res.append(GeneratePlane(boxCenter - Vector3(0, 0, boxSizeHalf.y), Vector3(boxSizeHalf.x, boxSizeHalf.y, 0)))
+	res.append(GeneratePlane(boxCenter + Vector3(0, 0, boxSizeHalf.y), Vector3(boxSizeHalf.x, boxSizeHalf.y, 0)))
+
+	return res
 #endregion
