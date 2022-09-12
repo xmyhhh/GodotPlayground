@@ -8,15 +8,13 @@ var SessionEnable = true
 var rayOrigin:Vector3
 var rayEnd:Vector3
 var currentManipulateObj = null
-	
+var isHandlePressing = false
 
 #region Godot Callback 
-
-	
 func _input(event):
-	if event is InputEventScreenTouch and not event.is_pressed():
+	if event is InputEventScreenTouch and  event.is_pressed():
 		InputEventProcess(event.position)
-	elif enableMouseInput and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and not event.pressed:
+	elif enableMouseInput and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
 		InputEventProcess(event.position)
 		
 func InputEventProcess(inputPos):
@@ -26,7 +24,7 @@ func InputEventProcess(inputPos):
 	rayEnd = rayOrigin + currentCamera.project_ray_normal(inputPos) * manipulateMaxDistance
 	var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFF, true, true)
 	if not intersection.empty() :
-		print(intersection.collider.get_path())
+#		print(intersection.collider.get_path())
 		#Step 1: try get if it is IntersectionObj
 		var intersectionObjRoot = TryGetIntersectionObjRoot(intersection.collider)
 		if(intersectionObjRoot != null):
@@ -39,9 +37,7 @@ func InputEventProcess(inputPos):
 		#Step 2: try get if it is IntersectionHandle
 		var intersectionHandleRoot = TryGetIntersectionHandleRoot(intersection.collider)
 		if(intersectionHandleRoot != null):
-			print("OnManipulateHandlePressedCallback", intersectionHandleRoot.get_path())
 			currentManipulateObj.OnManipulateHandlePressedCallback(intersectionHandleRoot.handleInfo)
-			
 			return
 
 #endregion

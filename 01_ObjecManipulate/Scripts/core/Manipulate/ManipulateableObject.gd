@@ -12,7 +12,7 @@ onready var ManipulateActionDIct  = {
 	"Rotation" : ["XAsix", "YAsix", "ZAsix"],
 	"Scale" : ["XAsix", "YAsix", "ZAsix"]
 }
-
+onready var enableMouseInput =true
 
 var meshNode = null
 var physicsBodyNode = null
@@ -33,15 +33,24 @@ func _ready():
 	if(not delayInit):
 		InitObject()
 		
-#func _input(event):
-#	if(not isHandlePressing):
-#		return
-		
-#	if event is InputEventScreenTouch and not event.is_pressed():
-#		InputEventProcess(event.position)
-#	elif enableMouseInput and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and not event.pressed:
-#		InputEventProcess(event.position)
-		
+func _input(event):
+	if(not isHandlePressing):
+		return
+	if event is InputEventScreenTouch and not event.is_pressed():
+		ReleseHandle()
+		return
+	if enableMouseInput and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and not event.pressed:
+		ReleseHandle()
+		return
+	if event is InputEventScreenDrag or event is InputEventMouseMotion:
+		match currentHandleInfo.handleType:
+			ManipulateActionType.Position:
+				PositionHandleProcess(event)
+			ManipulateActionType.Rotation:
+				RotationHandleProcess(event)
+			ManipulateActionType.Scale:
+				ScaleHandleProcess(event)
+
 #endregion
 
 #region Public Method
@@ -77,7 +86,7 @@ func OnManipulateStart():
 func OnManipulateHandlePressedCallback(handleInfo):
 	isHandlePressing = true
 	currentHandleInfo = handleInfo
-
+	
 func OnManipulateHandleUnPressedCallback(handleInfo):
 	isHandlePressing = false
 	currentHandleInfo = null
@@ -87,6 +96,7 @@ func OnManipulateEnd():
 		return
 	isManipulating = false
 	manipulate3DGUIRootNode.queue_free()
+
 #endregion
 
 #region Internal Method
@@ -157,8 +167,16 @@ func BoundingBoxGen(depth, width, height):
 
 	return boundingBoxRoot
 	
-func InputEventProcess(position):
+func ReleseHandle():
+	isHandlePressing = false
 	pass
+
+func PositionHandleProcess(event):
+	print("PositionHandleProcess")
+func RotationHandleProcess(event):
+	print("RotationHandleProcess")
+func ScaleHandleProcess(event):
+	print("ScaleHandleProcess")
 #endregion
 
 
@@ -208,7 +226,4 @@ func GenerateBoxFace(boxCenter:Vector3, boxSizeHalf:Vector3):
 	res.append(GeneratePlane(boxCenter + Vector3(0, 0, boxSizeHalf.z), Vector3(boxSizeHalf.x, boxSizeHalf.y, 0)))
 
 	return res
-	
-
-	
 #endregion
