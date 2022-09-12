@@ -14,6 +14,8 @@ onready var ManipulateActionDIct  = {
 }
 onready var enableMouseInput =true
 
+onready var projectionPlaneMaxSize = 200
+
 var meshNode = null
 var physicsBodyNode = null
 var collisonNodeArray = null
@@ -183,14 +185,25 @@ func ReleseHandle():
 	pass
 
 func PositionHandleProcess(event):
-	print("PositionHandleProcess")
-	print(currentHandleInfo.handleIndex)
-	
-	if(projectionPlaneNode ==null):
+	if(projectionPlaneNode == null):
 		CreateProjectionPlane(event, currentHandleInfo.handleData["normal"], currentHandleInfo.handleData["center"])
 
 	if event is InputEventScreenDrag or event is InputEventMouseMotion:
-		pass
+		var currentCamera = get_viewport().get_camera()
+		var spaceSatae = get_world().direct_space_state
+		var rayOrigin = currentCamera.project_ray_origin(event.position)
+		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * 200
+		var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFF, true, true)
+		if not intersection.empty() :
+
+			#try get if it is ProjectionPlane
+			var intersectionPlaneCollideroot = TryGetIntersectionProjectionPlaneRoot(intersection.collider)
+			if(intersectionPlaneCollideroot != null):
+				if(startPos == null):
+					startPos = intersection.position
+				else:
+					var movePos = intersection.position - startPos
+					print(movePos)
 	
 	
 func RotationHandleProcess(event):
@@ -257,9 +270,33 @@ func CreateProjectionPlane(event, normal, center):
 	boundingBoxRoot.add_child(meshInst)
 	meshInst.name = "ProjectionPlane"
 	meshInst.mesh = planeMesh
+	
 	meshInst.set_surface_material(0, editorRoot.planeMat)
 	var quat = Quat(normal.cross(Vector3.UP), normal.angle_to(Vector3.UP))
 	meshInst.transform.basis = Basis(quat)
 	meshInst.transform.origin = center
 	projectionPlaneNode = meshInst
+	
+	var area = Area.new()
+	area.set_meta("ProjectionPlane", true)
+	var collisionShape = CollisionShape.new()
+	var boxShape = BoxShape.new()
+	
+	meshInst.add_child(area)
+	area.add_child(collisionShape)
+	var boxSize
+	if(normal.x == 1):
+		boxSize = Vector3(0.2, projectionPlaneMaxSize, projectionPlaneMaxSize)
+	elif(normal.y == 1):
+		boxSize = Vector3(projectionPlaneMaxSize, 0.2, projectionPlaneMaxSize)
+	else:
+		boxSize = Vector3(projectionPlaneMaxSize, projectionPlaneMaxSize, 0.2)
+	boxShape.extents =  boxSize
+	collisionShape.shape = boxShape
+
+func TryGetIntersectionProjectionPlaneRoot(collider):
+	if(collider.get_parent().name == "ProjectionPlane"):
+		return collider
+	return null
+	
 #endregion
