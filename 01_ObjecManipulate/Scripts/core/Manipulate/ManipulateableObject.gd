@@ -27,6 +27,7 @@ var objInit = false
 var errorObj = false
 var isManipulating = false
 var isHandlePressing = false
+
 #region Godot Callback
 func _ready():
 	set_meta("ManipulateableObject", true)
@@ -157,22 +158,25 @@ func BoundingBoxGen(depth, width, height):
 		collisionShape.shape = boxShape
 
 		meshInst.mesh = mesh
-
 		boundingBoxRoot.add_child(meshInst)
 		meshInst.set_surface_material(0, editorRoot.faceMat)
 		meshInst.set_script(editorRoot.handleScript)
 		meshInst.transform.origin = boxFaces[i][2]
 		meshInst.handleInfo.handleIndex = i
 		meshInst.handleInfo.handleType = ManipulateActionType.Position
-
+		meshInst.handleInfo.handleData = {"normal": boxFaces[i][3]}
 	return boundingBoxRoot
 	
 func ReleseHandle():
 	isHandlePressing = false
+	currentHandleInfo = null
 	pass
 
 func PositionHandleProcess(event):
 	print("PositionHandleProcess")
+	print(currentHandleInfo.index)
+	
+	
 func RotationHandleProcess(event):
 	print("RotationHandleProcess")
 func ScaleHandleProcess(event):
@@ -191,15 +195,20 @@ func GeneratePlane(center:Vector3, halfSize:Vector3):
 	surfaceTool.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var p
 	var boxsize
+	var normal 
 	if(halfSize.x == 0):
 		p = Vector3(0, halfSize.y, -halfSize.z)
 		boxsize = Vector3(0.1, halfSize.y, halfSize.z)
+		normal = Vector3(1, 0, 0)
 	elif(halfSize.y == 0):
 		p = Vector3(halfSize.x, 0, -halfSize.z)
 		boxsize = Vector3(halfSize.x, 0.1, halfSize.z)
+		normal = Vector3(0, 1, 0)
 	else:
 		p = Vector3(halfSize.x, -halfSize.y, 0)
 		boxsize = Vector3(halfSize.x, halfSize.y, 0.1)
+		normal = Vector3(0, 0, 1)
+	
 	
 	surfaceTool.add_vertex( - halfSize)
 	surfaceTool.add_vertex( - p)
@@ -211,7 +220,7 @@ func GeneratePlane(center:Vector3, halfSize:Vector3):
 
 #	var ploygonArray:PoolVector3Array = [(center - halfSize), (center - p), (center + halfSize)]
 ##	print(ploygonArray)
-	return [surfaceTool.commit(), boxsize, center]
+	return [surfaceTool.commit(), center, boxsize, normal]
 
 func GenerateBoxFace(boxCenter:Vector3, boxSizeHalf:Vector3):
 	var res = []
@@ -226,4 +235,7 @@ func GenerateBoxFace(boxCenter:Vector3, boxSizeHalf:Vector3):
 	res.append(GeneratePlane(boxCenter + Vector3(0, 0, boxSizeHalf.z), Vector3(boxSizeHalf.x, boxSizeHalf.y, 0)))
 
 	return res
+
+func ProjectionFace(rayDir,  faceNormal):
+	pass
 #endregion

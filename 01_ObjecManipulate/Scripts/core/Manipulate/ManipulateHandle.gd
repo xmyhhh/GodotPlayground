@@ -11,4 +11,5 @@ func _ready():
 class HandleInfo:
 	var handleIndex = null
 	var handleType = null
+	var handleData = null
 #endregion
