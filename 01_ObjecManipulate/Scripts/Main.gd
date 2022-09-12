@@ -39,3 +39,4 @@ var hornTrans = [
 ]
 
 var faceMat = load("res://01_ObjecManipulate/shaders/BoundingBoxFaceMat.tres")
+var planeMat = load("res://01_ObjecManipulate/shaders/BoundingBoxPositionPlaneMat.tres")

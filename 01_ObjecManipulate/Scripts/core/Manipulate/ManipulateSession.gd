@@ -12,7 +12,7 @@ var isHandlePressing = false
 
 #region Godot Callback 
 func _input(event):
-	if event is InputEventScreenTouch and  event.is_pressed():
+	if event is InputEventScreenTouch and event.is_pressed():
 		InputEventProcess(event.position)
 	elif enableMouseInput and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
 		InputEventProcess(event.position)

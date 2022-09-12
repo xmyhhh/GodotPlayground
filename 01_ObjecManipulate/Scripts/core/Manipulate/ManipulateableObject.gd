@@ -19,6 +19,7 @@ var physicsBodyNode = null
 var collisonNodeArray = null
 
 var manipulate3DGUIRootNode = null
+var boundingBoxRoot = null
 var collisonMaxPoint = null
 var collisonMinPoint = null
 var currentHandleInfo = null
@@ -27,6 +28,14 @@ var objInit = false
 var errorObj = false
 var isManipulating = false
 var isHandlePressing = false
+
+
+
+
+#region position
+var startPos = null
+var projectionPlaneNode = null
+#endregion
 
 #region Godot Callback
 func _ready():
@@ -37,20 +46,21 @@ func _ready():
 func _input(event):
 	if(not isHandlePressing):
 		return
+		
 	if event is InputEventScreenTouch and not event.is_pressed():
 		ReleseHandle()
 		return
 	if enableMouseInput and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and not event.pressed:
 		ReleseHandle()
 		return
-	if event is InputEventScreenDrag or event is InputEventMouseMotion:
-		match currentHandleInfo.handleType:
-			ManipulateActionType.Position:
-				PositionHandleProcess(event)
-			ManipulateActionType.Rotation:
-				RotationHandleProcess(event)
-			ManipulateActionType.Scale:
-				ScaleHandleProcess(event)
+
+	match currentHandleInfo.handleType:
+		ManipulateActionType.Position:
+			PositionHandleProcess(event)
+		ManipulateActionType.Rotation:
+			RotationHandleProcess(event)
+		ManipulateActionType.Scale:
+			ScaleHandleProcess(event)
 
 #endregion
 
@@ -120,8 +130,8 @@ func InitCollisonBoxPoint(collisionNodeArray:Array):
 					collisonMinPoint = compareTarget
 
 func BoundingBoxGen(depth, width, height):
-	var boundingBoxRoot = Spatial.new()
-	
+	boundingBoxRoot = Spatial.new()
+	boundingBoxRoot.name = "boundingBoxRoot"
 	var boxSizeHalf = Vector3(width, height, depth) / 2
 	#Step 1: 12 edge gen
 	for i in range(12):
@@ -164,7 +174,7 @@ func BoundingBoxGen(depth, width, height):
 		meshInst.transform.origin = boxFaces[i][2]
 		meshInst.handleInfo.handleIndex = i
 		meshInst.handleInfo.handleType = ManipulateActionType.Position
-		meshInst.handleInfo.handleData = {"normal": boxFaces[i][3]}
+		meshInst.handleInfo.handleData = {"normal": boxFaces[i][3], "center": boxFaces[i][2]}
 	return boundingBoxRoot
 	
 func ReleseHandle():
@@ -174,7 +184,13 @@ func ReleseHandle():
 
 func PositionHandleProcess(event):
 	print("PositionHandleProcess")
-	print(currentHandleInfo.index)
+	print(currentHandleInfo.handleIndex)
+	
+	if(projectionPlaneNode ==null):
+		CreateProjectionPlane(event, currentHandleInfo.handleData["normal"], currentHandleInfo.handleData["center"])
+
+	if event is InputEventScreenDrag or event is InputEventMouseMotion:
+		pass
 	
 	
 func RotationHandleProcess(event):
@@ -209,7 +225,6 @@ func GeneratePlane(center:Vector3, halfSize:Vector3):
 		boxsize = Vector3(halfSize.x, halfSize.y, 0.1)
 		normal = Vector3(0, 0, 1)
 	
-	
 	surfaceTool.add_vertex( - halfSize)
 	surfaceTool.add_vertex( - p)
 	surfaceTool.add_vertex( + p)
@@ -220,7 +235,7 @@ func GeneratePlane(center:Vector3, halfSize:Vector3):
 
 #	var ploygonArray:PoolVector3Array = [(center - halfSize), (center - p), (center + halfSize)]
 ##	print(ploygonArray)
-	return [surfaceTool.commit(), center, boxsize, normal]
+	return [surfaceTool.commit(), boxsize, center, normal]
 
 func GenerateBoxFace(boxCenter:Vector3, boxSizeHalf:Vector3):
 	var res = []
@@ -233,9 +248,18 @@ func GenerateBoxFace(boxCenter:Vector3, boxSizeHalf:Vector3):
 
 	res.append(GeneratePlane(boxCenter - Vector3(0, 0, boxSizeHalf.z), Vector3(boxSizeHalf.x, boxSizeHalf.y, 0)))
 	res.append(GeneratePlane(boxCenter + Vector3(0, 0, boxSizeHalf.z), Vector3(boxSizeHalf.x, boxSizeHalf.y, 0)))
-
 	return res
 
-func ProjectionFace(rayDir,  faceNormal):
-	pass
+func CreateProjectionPlane(event, normal, center):
+	var meshInst = MeshInstance.new()
+	var planeMesh = PlaneMesh.new()
+	planeMesh.size = Vector2(200, 200)
+	boundingBoxRoot.add_child(meshInst)
+	meshInst.name = "ProjectionPlane"
+	meshInst.mesh = planeMesh
+	meshInst.set_surface_material(0, editorRoot.planeMat)
+	var quat = Quat(normal.cross(Vector3.UP), normal.angle_to(Vector3.UP))
+	meshInst.transform.basis = Basis(quat)
+	meshInst.transform.origin = center
+	projectionPlaneNode = meshInst
 #endregion
