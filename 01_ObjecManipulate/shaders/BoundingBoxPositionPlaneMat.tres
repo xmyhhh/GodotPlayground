@@ -2,12 +2,12 @@
 
 [sub_resource type="Shader" id=5]
 code = "shader_type spatial;
-render_mode cull_disabled;
+render_mode cull_disabled, unshaded;
 
 void fragment(){
 	
-	ALBEDO = vec3(1,0.5,0.2);
-	ALPHA = 0.2;
+	ALBEDO = vec3(1, 0, 0.2);
+	ALPHA = 0.4;
 }"
 
 [resource]

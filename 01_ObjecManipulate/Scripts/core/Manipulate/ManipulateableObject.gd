@@ -31,9 +31,6 @@ var errorObj = false
 var isManipulating = false
 var isHandlePressing = false
 
-
-
-
 #region position
 var startPos = null
 var projectionPlaneNode = null
@@ -180,12 +177,14 @@ func BoundingBoxGen(depth, width, height):
 	return boundingBoxRoot
 	
 func ReleseHandle():
+	if(currentHandleInfo.handleType == ManipulateActionType.Position):
+		projectionPlaneNode.queue_free()
 	isHandlePressing = false
 	currentHandleInfo = null
 	pass
 
 func PositionHandleProcess(event):
-	if(projectionPlaneNode == null):
+	if(not is_instance_valid(projectionPlaneNode)):
 		CreateProjectionPlane(event, currentHandleInfo.handleData["normal"], currentHandleInfo.handleData["center"])
 
 	if event is InputEventScreenDrag or event is InputEventMouseMotion:
