@@ -4,11 +4,20 @@
 code = "shader_type spatial;
 render_mode cull_disabled, unshaded;
 
+uniform bool visible = false;
+
 void fragment(){
 	
 	ALBEDO = vec3(1,1,0.5);
-	ALPHA = 0.5;
+	if(visible){
+		ALPHA = 0.5;
+	}
+	else{
+		ALPHA = 0.;
+	}
+
 }"
 
 [resource]
 shader = SubResource( 5 )
+shader_param/visible = false
