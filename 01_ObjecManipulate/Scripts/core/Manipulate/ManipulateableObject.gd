@@ -155,9 +155,6 @@ func BoundingBoxGen(depth, width, height):
 		meshInst.handleInfo.handleIndex = i
 		meshInst.handleInfo.handleType = ManipulateActionType.Position
 
-		
-		
-
 	return boundingBoxRoot
 	
 func InputEventProcess(position):
@@ -175,13 +172,16 @@ func GeneratePlane(center:Vector3, halfSize:Vector3):
 	var surfaceTool = SurfaceTool.new()
 	surfaceTool.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var p
-
+	var boxsize
 	if(halfSize.x == 0):
 		p = Vector3(0, halfSize.y, -halfSize.z)
+		boxsize = Vector3(0.1, halfSize.y, halfSize.z)
 	elif(halfSize.y == 0):
 		p = Vector3(halfSize.x, 0, -halfSize.z)
+		boxsize = Vector3(halfSize.x, 0.1, halfSize.z)
 	else:
 		p = Vector3(halfSize.x, -halfSize.y, 0)
+		boxsize = Vector3(halfSize.x, halfSize.y, 0.1)
 	
 	surfaceTool.add_vertex( - halfSize)
 	surfaceTool.add_vertex( - p)
@@ -193,7 +193,7 @@ func GeneratePlane(center:Vector3, halfSize:Vector3):
 
 #	var ploygonArray:PoolVector3Array = [(center - halfSize), (center - p), (center + halfSize)]
 ##	print(ploygonArray)
-	return [surfaceTool.commit(), p, center]
+	return [surfaceTool.commit(), boxsize, center]
 
 func GenerateBoxFace(boxCenter:Vector3, boxSizeHalf:Vector3):
 	var res = []

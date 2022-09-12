@@ -26,7 +26,7 @@ func InputEventProcess(inputPos):
 	rayEnd = rayOrigin + currentCamera.project_ray_normal(inputPos) * manipulateMaxDistance
 	var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFF, true, true)
 	if not intersection.empty() :
-		
+		print(intersection.collider.get_path())
 		#Step 1: try get if it is IntersectionObj
 		var intersectionObjRoot = TryGetIntersectionObjRoot(intersection.collider)
 		if(intersectionObjRoot != null):
