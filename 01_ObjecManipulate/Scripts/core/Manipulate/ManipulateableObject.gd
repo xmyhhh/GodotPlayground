@@ -143,17 +143,20 @@ func BoundingBoxGen(depth, width, height):
 		meshInst.add_child(area)
 		area.add_child(collisionShape)
 
-		boxShape.extents =  Vector3(boxFaces[i][1][0],boxFaces[i][1][1],boxFaces[i][1][2]) 
+		boxShape.extents =  Vector3(boxFaces[i][1][0],boxFaces[i][1][1], boxFaces[i][1][2]) 
 		collisionShape.shape = boxShape
+
 		meshInst.mesh = mesh
 
 		boundingBoxRoot.add_child(meshInst)
-		meshInst.transform.origin = boxFaces[i][2]
 		meshInst.set_surface_material(0, editorRoot.faceMat)
 		meshInst.set_script(editorRoot.handleScript)
-
+		meshInst.transform.origin = boxFaces[i][2]
 		meshInst.handleInfo.handleIndex = i
 		meshInst.handleInfo.handleType = ManipulateActionType.Position
+
+		
+		
 
 	return boundingBoxRoot
 	
@@ -174,12 +177,11 @@ func GeneratePlane(center:Vector3, halfSize:Vector3):
 	var p
 
 	if(halfSize.x == 0):
-		p = Vector3(0.001, halfSize.y, -halfSize.z)
-		
+		p = Vector3(0, halfSize.y, -halfSize.z)
 	elif(halfSize.y == 0):
-		p = Vector3(halfSize.x, 0.001, -halfSize.z)
+		p = Vector3(halfSize.x, 0, -halfSize.z)
 	else:
-		p = Vector3(halfSize.x, -halfSize.y, 0.001)
+		p = Vector3(halfSize.x, -halfSize.y, 0)
 	
 	surfaceTool.add_vertex( - halfSize)
 	surfaceTool.add_vertex( - p)
@@ -190,6 +192,7 @@ func GeneratePlane(center:Vector3, halfSize:Vector3):
 	surfaceTool.add_vertex( + p)
 
 #	var ploygonArray:PoolVector3Array = [(center - halfSize), (center - p), (center + halfSize)]
+##	print(ploygonArray)
 	return [surfaceTool.commit(), p, center]
 
 func GenerateBoxFace(boxCenter:Vector3, boxSizeHalf:Vector3):
