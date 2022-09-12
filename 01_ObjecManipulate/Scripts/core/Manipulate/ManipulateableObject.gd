@@ -33,9 +33,12 @@ var isManipulating = false
 var isHandlePressing = false
 
 #region position
-var startPos = null
-var objStartPos = null
+var projectionStartPos = null
 var projectionPlaneNode = null
+
+var objStartPos = null
+var objStartRot = null
+var objStartScale = null
 #endregion
 
 #region Godot Callback
@@ -141,9 +144,9 @@ func BoundingBoxGen(depth, width, height):
 		boundingBoxRoot.add_child(meshInst)
 		meshInst.handleInfo.handleIndex = i
 		meshInst.handleInfo.handleType = ManipulateActionType.Rotation
-		meshInst.transform.origin = editorRoot.eadgTrans[2 * i] * boxSizeHalf
-		meshInst.transform.basis = Basis(editorRoot.eadgTrans[2 * i + 1])
-		
+		meshInst.transform.origin = editorRoot.eadgTrans[3 * i] * boxSizeHalf
+		meshInst.transform.basis = Basis(editorRoot.eadgTrans[3 * i + 1])
+		meshInst.handleInfo.handleData = {"normal": editorRoot.eadgTrans[3 * i + 2]}
 	#Step 2: 8 horn gen
 	for i in range(8):
 		var meshInst = editorRoot.hornPrefab.instance()
@@ -183,54 +186,84 @@ func ReleseHandle():
 	if(currentHandleInfo.handleType == ManipulateActionType.Position):
 		if(is_instance_valid(projectionPlaneNode)):
 			projectionPlaneNode.queue_free()
-			startPos = null
+			projectionStartPos = null
+	if(currentHandleInfo.handleType == ManipulateActionType.Rotation):
+		if(is_instance_valid(projectionPlaneNode)):
+			projectionPlaneNode.queue_free()
+			projectionStartPos = null
 	isHandlePressing = false
 	currentHandleInfo = null
 	pass
 
 func PositionHandleProcess(event):
 	if(not is_instance_valid(projectionPlaneNode)):
-		CreateProjectionPlane(event, currentHandleInfo.handleData["normal"], currentHandleInfo.handleData["center"])
+		CreateProjectionPlane(event, currentHandleInfo.handleData["normal"], currentHandleInfo.handleData["center"] + transform.origin)
 
 	if event is InputEventScreenDrag or event is InputEventMouseMotion:
 		var currentCamera = get_viewport().get_camera()
 		var spaceSatae = get_world().direct_space_state
 		var rayOrigin = currentCamera.project_ray_origin(event.position)
-		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * 200
+		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * get_parent().manipulateMaxDistance
 		var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFF, false, true)
 		if not intersection.empty()	:
 			#try get if it is ProjectionPlane
 #			print(intersection.collider.get_path())
 			var intersectionPlaneCollideroot = TryGetIntersectionProjectionPlaneRoot(intersection.collider)
 			if(intersectionPlaneCollideroot != null):
-				if(startPos == null):
-					startPos = intersection.position
+				if(projectionStartPos == null):
+					projectionStartPos = VecApproximateZero(intersection.position)
 					objStartPos = transform.origin
 				else:
-					var movePos = intersection.position - startPos
+					var movePos = VecApproximateZero(intersection.position - projectionStartPos)
 					var vecApproximate = VecApproximateZero(movePos)
-					print("--------------------")
-					print("movePos", movePos)
-					print("objStartPos", objStartPos)
-					print("vecApproximate", vecApproximate)
-					print("objStartPos + vecApproximate", objStartPos + vecApproximate)
+#					print("--------------------")
+#					print("movePos", movePos)
+#					print("objStartPos", objStartPos)
+#					print("vecApproximate", vecApproximate)
+#					print("objStartPos + vecApproximate", objStartPos + vecApproximate)
 					#region move obj
-					
 					transform.origin = objStartPos + vecApproximate
 					#endregion
-	
+var i = 0
 func RotationHandleProcess(event):
-	print("RotationHandleProcess")
+	if(not is_instance_valid(projectionPlaneNode)):
+		CreateProjectionPlane(event, currentHandleInfo.handleData["normal"], transform.origin)
 	
+	if event is InputEventScreenDrag or event is InputEventMouseMotion:
+		var currentCamera = get_viewport().get_camera()
+		var spaceSatae = get_world().direct_space_state
+		var rayOrigin = currentCamera.project_ray_origin(event.position)
+		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * get_parent().manipulateMaxDistance
+		var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFF, false, true)
+		if not intersection.empty()	:
+			#try get if it is ProjectionPlane
+#			print(intersection.collider.get_path())
+			var intersectionPlaneCollideroot = TryGetIntersectionProjectionPlaneRoot(intersection.collider)
+			if(intersectionPlaneCollideroot != null):
+				if(projectionStartPos == null):
+					if((VecApproximateZero(intersection.position) - transform.origin).length() > 0.1):
+						projectionStartPos = VecApproximateZero(intersection.position)
+						objStartRot = transform
+				else:
+					var p1 = VecApproximateZero(intersection.position - transform.origin)
+					var p2 = VecApproximateZero(projectionStartPos - transform.origin)
+
+					transform = objStartRot.rotated((p1.cross(p2)+ objStartRot.origin).normalized(), p1.angle_to(p2))
+					if(i%20 == 0):
+						i+=1
+						print("--------------------")
+						print("p1.angle_to(p2):", p1.angle_to(p2))
+						print("p1.cross(p2):", (p1.cross(p2)+ objStartRot.origin).normalized() )
+						print("p1:", p1)
+						print("p2:", p2)
+					else:
+						i+=1
+					#region rotate obj
+				
+					#endregion
 func ScaleHandleProcess(event):
 	print("ScaleHandleProcess")
 #endregion
-
-
-
-
-
-
 
 #region Tool Script
 func Vec3Compare(source, target):
@@ -259,15 +292,15 @@ func GeneratePlane(center:Vector3, halfSize:Vector3):
 	var normal 
 	if(halfSize.x == 0):
 		p = Vector3(0, halfSize.y, -halfSize.z)
-		boxsize = Vector3(0.1, halfSize.y, halfSize.z)
+		boxsize = Vector3(0.001, halfSize.y, halfSize.z)
 		normal = Vector3(1, 0, 0)
 	elif(halfSize.y == 0):
 		p = Vector3(halfSize.x, 0, -halfSize.z)
-		boxsize = Vector3(halfSize.x, 0.1, halfSize.z)
+		boxsize = Vector3(halfSize.x, 0.001, halfSize.z)
 		normal = Vector3(0, 1, 0)
 	else:
 		p = Vector3(halfSize.x, -halfSize.y, 0)
-		boxsize = Vector3(halfSize.x, halfSize.y, 0.1)
+		boxsize = Vector3(halfSize.x, halfSize.y, 0.001)
 		normal = Vector3(0, 0, 1)
 	
 	surfaceTool.add_vertex( - halfSize)
@@ -303,7 +336,7 @@ func CreateProjectionPlane(event, normal, center):
 
 	planeMesh.size = Vector2(projectionPlaneMaxSize, projectionPlaneMaxSize)
 	
-	add_child(meshInst)
+	manipulateSessionRoot.add_child(meshInst)
 	meshInst.add_child(area)
 	area.add_child(collisionShape)
 	area.transform.basis = Basis(Quat(normal.cross(Vector3.UP), -normal.angle_to(Vector3.UP)))
@@ -319,11 +352,11 @@ func CreateProjectionPlane(event, normal, center):
 
 	var boxSize
 	if(normal.x == 1):
-		boxSize = Vector3(0.2, projectionPlaneMaxSize/2.0, projectionPlaneMaxSize/2.0)
+		boxSize = Vector3(0.0011, projectionPlaneMaxSize/2.0, projectionPlaneMaxSize/2.0)
 	elif(normal.y == 1):
-		boxSize = Vector3(projectionPlaneMaxSize/2.0, 0.2, projectionPlaneMaxSize/2.0)
+		boxSize = Vector3(projectionPlaneMaxSize/2.0, 0.0011, projectionPlaneMaxSize/2.0)
 	else:
-		boxSize = Vector3(projectionPlaneMaxSize/2.0, projectionPlaneMaxSize/2.0, 0.2)
+		boxSize = Vector3(projectionPlaneMaxSize/2.0, projectionPlaneMaxSize/2.0, 0.0011)
 	boxShape.extents =  boxSize
 	collisionShape.shape = boxShape
 

@@ -26,7 +26,7 @@ mesh = SubResource( 1 )
 shape = SubResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 0.844515, 0, 0.535532, 0, 1, 0, -0.535532, 0, 0.844515, 2.99454, 3.24943, 5.14133 )
+transform = Transform( 0.844515, 0, 0.535532, 0, 1, 0, -0.535532, 0, 0.844515, 2.99454, 5.91859, 5.14133 )
 __meta__ = {
 "_edit_group_": true
 }

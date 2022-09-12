@@ -1,7 +1,7 @@
 extends Spatial
 
 
-export var manipulateMaxDistance = 200
+export var manipulateMaxDistance = 80
 export var enableMouseInput = true #for debug use
 
 var SessionEnable = true
