@@ -247,8 +247,9 @@ func RotationHandleProcess(event):
 				else:
 					var p1 = VecApproximateZero(intersection.position - transform.origin)
 					var p2 = VecApproximateZero(projectionStartPos - transform.origin)
-
-					transform = objStartRot.rotated(VecAbs(p1.cross(p2).normalized()), p1.angle_to(p2))
+					transform.origin = Vector3(0, 0, 0)
+					transform = objStartRot.rotated((p1.cross(p2).normalized()), -p1.angle_to(p2))
+					transform.origin = objStartRot.origin
 					if(i%20 == 0):
 						i+=1
 						print("--------------------")
