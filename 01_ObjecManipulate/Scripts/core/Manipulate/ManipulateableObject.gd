@@ -248,12 +248,12 @@ func RotationHandleProcess(event):
 					var p1 = VecApproximateZero(intersection.position - transform.origin)
 					var p2 = VecApproximateZero(projectionStartPos - transform.origin)
 
-					transform = objStartRot.rotated((p1.cross(p2)+ objStartRot.origin).normalized(), p1.angle_to(p2))
+					transform = objStartRot.rotated(VecAbs(p1.cross(p2).normalized()), p1.angle_to(p2))
 					if(i%20 == 0):
 						i+=1
 						print("--------------------")
 						print("p1.angle_to(p2):", p1.angle_to(p2))
-						print("p1.cross(p2):", (p1.cross(p2)+ objStartRot.origin).normalized() )
+						print("p1.cross(p2):", (p1.cross(p2)).normalized() )
 						print("p1:", p1)
 						print("p2:", p2)
 					else:
@@ -270,6 +270,9 @@ func Vec3Compare(source, target):
 	if(source.x <= target.x and source.y <= target.y and source.z <= target.z):
 		return true
 	return false
+func VecAbs(inVec):
+	if(inVec is Vector3):
+		return Vector3(abs(inVec.x), abs(inVec.y), abs(inVec.z))
 
 func VecApproximateZero(inVec):
 	if(inVec is Vector3):
