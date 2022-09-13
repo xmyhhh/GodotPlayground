@@ -14,7 +14,7 @@ onready var ManipulateActionDIct  = {
 }
 onready var enableMouseInput =true
 
-onready var projectionPlaneMaxSize = 200
+onready var projectionPlaneMaxSize = 5
 
 var meshNode = null
 var physicsBodyNode = null
@@ -224,11 +224,12 @@ func PositionHandleProcess(event):
 					#region move obj
 					transform.origin = objStartPos + vecApproximate
 					#endregion
-var i = 0
+
 func RotationHandleProcess(event):
 	if(not is_instance_valid(projectionPlaneNode)):
-		CreateProjectionPlane(event, currentHandleInfo.handleData["normal"], transform.origin)
-	
+		
+		CreateProjectionPlane(event, transform.basis.xform(currentHandleInfo.handleData["normal"]), transform.origin)
+		
 	if event is InputEventScreenDrag or event is InputEventMouseMotion:
 		var currentCamera = get_viewport().get_camera()
 		var spaceSatae = get_world().direct_space_state
@@ -245,20 +246,20 @@ func RotationHandleProcess(event):
 						projectionStartPos = VecApproximateZero(intersection.position)
 						objStartRot = transform
 				else:
-					var p1 = VecApproximateZero(intersection.position - transform.origin)
-					var p2 = VecApproximateZero(projectionStartPos - transform.origin)
+					var p1 = VecApproximateZero(intersection.position - global_translation)
+					var p2 = VecApproximateZero(projectionStartPos - global_translation)
+					
+					var a = (p1.cross(p2).normalized())
+					var b =  -p1.angle_to(p2)
+					print("intersection.position", intersection.position)
+					print("(p1.cross(p2).normalized())", (p1.cross(p2).normalized()))
+					print("-p1.angle_to(p2)", -p1.angle_to(p2))
+					print("p1", p1)
+					print("p2", p2)
 					transform.origin = Vector3(0, 0, 0)
 					transform = objStartRot.rotated((p1.cross(p2).normalized()), -p1.angle_to(p2))
 					transform.origin = objStartRot.origin
-					if(i%20 == 0):
-						i+=1
-						print("--------------------")
-						print("p1.angle_to(p2):", p1.angle_to(p2))
-						print("p1.cross(p2):", (p1.cross(p2)).normalized() )
-						print("p1:", p1)
-						print("p2:", p2)
-					else:
-						i+=1
+
 					#region rotate obj
 				
 					#endregion
@@ -343,30 +344,26 @@ func CreateProjectionPlane(event, normal, center):
 	manipulateSessionRoot.add_child(meshInst)
 	meshInst.add_child(area)
 	area.add_child(collisionShape)
-	area.transform.basis = Basis(Quat(normal.cross(Vector3.UP), -normal.angle_to(Vector3.UP)))
+#	area.transform.basis = Basis(Quat(normal.cross(Vector3.UP + Vector3(0, 0, 0.0001)).normalized(), normal.angle_to(Vector3.UP)))   #这个地方必须把area转回来，不然下一步设置boxsize会被影响
 	
 	meshInst.name = "ProjectionPlane"
 	meshInst.mesh = planeMesh
 	meshInst.set_surface_material(0, editorRoot.planeMat)
-	meshInst.transform.basis = Basis(Quat(normal.cross(Vector3.UP), normal.angle_to(Vector3.UP)))
+	
+	meshInst.transform.basis = Basis(Quat(normal.cross(Vector3.UP + Vector3(0, 0, 0.0001)).normalized(), -normal.angle_to(Vector3.UP)))
 	meshInst.transform.origin = center
 	
 	projectionPlaneNode = meshInst
 	area.set_meta("ProjectionPlane", true)
 
-	var boxSize
-	if(normal.x == 1):
-		boxSize = Vector3(0.0011, projectionPlaneMaxSize/2.0, projectionPlaneMaxSize/2.0)
-	elif(normal.y == 1):
-		boxSize = Vector3(projectionPlaneMaxSize/2.0, 0.0011, projectionPlaneMaxSize/2.0)
-	else:
-		boxSize = Vector3(projectionPlaneMaxSize/2.0, projectionPlaneMaxSize/2.0, 0.0011)
+	var boxSize = Vector3(projectionPlaneMaxSize/2.0, 0.0011, projectionPlaneMaxSize/2.0)
+	
 	boxShape.extents =  boxSize
 	collisionShape.shape = boxShape
 
 func TryGetIntersectionProjectionPlaneRoot(collider):
 	if(collider.get_parent().name == "ProjectionPlane"):
-		return collider
+		return collider.get_parent()
 	return null
 	
 #endregion
