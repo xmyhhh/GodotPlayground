@@ -291,7 +291,7 @@ func ScaleHandleProcess(event):
 
 				
 					var distanceCurrent = (intersection.position - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation).length()
-					var distance = clamp((distanceCurrent - distanceOrigin) * 1 + 1, 0.25, 4) 
+					var distance = clamp((distanceCurrent - distanceOrigin) * scaleSpeed + 1, 0.25, 4) 
 
 					transform.origin = Vector3(0, 0, 0)
 					transform.basis = objStartTrans.basis.scaled(Vector3(distance, distance, distance))
