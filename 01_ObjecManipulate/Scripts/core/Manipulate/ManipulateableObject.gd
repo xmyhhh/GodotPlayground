@@ -13,8 +13,8 @@ onready var ManipulateActionDIct  = {
 	"Scale" : ["XAsix", "YAsix", "ZAsix"]
 }
 onready var enableMouseInput =true
-
 onready var projectionPlaneMaxSize = 50
+onready var scaleSpeed = 0.5
 
 var meshNode = null
 var physicsBodyNode = null
@@ -32,13 +32,17 @@ var errorObj = false
 var isManipulating = false
 var isHandlePressing = false
 
-#region position
+#region mapulate
 var projectionStartPos = null
 var projectionPlaneNode = null
 
 var objStartPos = null
 var objStartTrans = null
 var objStartScale = null
+
+var diagonalDir
+var oldDiagonalGobalPos
+var distanceOrigin = null
 #endregion
 
 #region Godot Callback
@@ -148,6 +152,7 @@ func BoundingBoxGen(depth, width, height):
 		meshInst.transform.basis = Basis(editorRoot.eadgTrans[3 * i + 1])
 		meshInst.handleInfo.handleData = {"normal": editorRoot.eadgTrans[3 * i + 2]}
 	#Step 2: 8 horn gen
+	var hornTmpArray = []
 	for i in range(8):
 		var meshInst = editorRoot.hornPrefab.instance()
 		boundingBoxRoot.add_child(meshInst)
@@ -155,7 +160,12 @@ func BoundingBoxGen(depth, width, height):
 		meshInst.handleInfo.handleType = ManipulateActionType.Scale
 		meshInst.transform.origin = editorRoot.hornTrans[2 * i] * boxSizeHalf
 		meshInst.transform.basis = Basis(editorRoot.hornTrans[2 * i + 1])
-		meshInst.handleInfo.handleData = {"origin": meshInst.transform.origin}
+		meshInst.handleInfo.handleData = {"origin": meshInst.transform.origin }
+		hornTmpArray.append(meshInst)
+	for i in range(4): #add Diagonal mesh node
+		hornTmpArray[i].handleInfo.handleData["diagonalMeshInstNode"] = hornTmpArray[i+4]
+		hornTmpArray[i+4].handleInfo.handleData["diagonalMeshInstNode"] = hornTmpArray[i]
+		
 	#Step 3: 6 face gen(position)
 	var boxFaces = GenerateBoxFace(Vector3(0, 0, 0), boxSizeHalf)
 	for i in range(6):
@@ -195,6 +205,7 @@ func ReleseHandle():
 	if(currentHandleInfo.handleType == ManipulateActionType.Scale):
 		if(is_instance_valid(projectionPlaneNode)):
 			projectionPlaneNode.queue_free()
+			projectionStartPos = null
 	isHandlePressing = false
 	currentHandleInfo = null
 	pass
@@ -256,12 +267,12 @@ func RotationHandleProcess(event):
 				
 					#endregion
 func ScaleHandleProcess(event):
-	print("ScaleHandleProcess")
+	var currentCamera = get_viewport().get_camera()
 	if(not is_instance_valid(projectionPlaneNode)):
-		CreateProjectionPlane(transform.basis.xform(currentHandleInfo.handleData["origin"]), transform.basis.xform(currentHandleInfo.handleData["origin"]) + transform.origin)
+		CreateProjectionPlane(transform.basis.xform(currentCamera.global_translation - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation), transform.basis.xform(currentHandleInfo.handleData["diagonalMeshInstNode"].transform.origin) + transform.origin)
 
 	if event is InputEventScreenDrag or event is InputEventMouseMotion:
-		var currentCamera = get_viewport().get_camera()
+		
 		var spaceSatae = get_world().direct_space_state
 		var rayOrigin = currentCamera.project_ray_origin(event.position)
 		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * get_parent().manipulateMaxDistance
@@ -273,16 +284,20 @@ func ScaleHandleProcess(event):
 				if(projectionStartPos == null):
 						projectionStartPos = VecApproximateZero(intersection.position)
 						objStartTrans = transform
+						distanceOrigin =  (intersection.position - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation).length()
+						diagonalDir = currentHandleInfo.handleData["origin"]   #obj local dir
+						oldDiagonalGobalPos =  currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation  #world pos
 				else:
-					var distance = VecApproximateZero(intersection.position - projectionStartPos).length() * 0.1 + 1
+
+				
+					var distanceCurrent = (intersection.position - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation).length()
+					var distance = clamp((distanceCurrent - distanceOrigin) * 1 + 1, 0.25, 4) 
 
 					transform.origin = Vector3(0, 0, 0)
-					transform = objStartTrans.scaled(Vector3(distance, distance, distance))
-					transform.origin = (currentHandleInfo.handleData["origin"].length() * distance + (objStartTrans.origin - objStartTrans.basis.xform(currentHandleInfo.handleData["origin"])).distance_to(Vector3(0, 0, 0))) * objStartTrans.basis.xform(currentHandleInfo.handleData["origin"]).normalized()
-					var a = currentHandleInfo.handleData["origin"].length()
-					var b = (objStartTrans.origin - objStartTrans.basis.xform(currentHandleInfo.handleData["origin"])).distance_to(Vector3(0, 0, 0))
-					var c = objStartTrans.basis.xform(currentHandleInfo.handleData["origin"]).normalized()
-					pass
+					transform.basis = objStartTrans.basis.scaled(Vector3(distance, distance, distance))
+					var newDiagonalGobalPos =  currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation
+					transform.origin = oldDiagonalGobalPos - newDiagonalGobalPos
+
 #endregion
 
 #region Tool Script

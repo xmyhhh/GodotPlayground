@@ -27,16 +27,14 @@ var hornPrefab = load("res://01_ObjecManipulate/prefabs/horn.tscn")
 var hornTrans = [
 	Vector3(1, 1, 1),   Quat(Vector3(0, 1, 0), HALF_PIE),
 	Vector3(1, 1, -1), Quat(Vector3(0, 1, 0), PIE),
-	
 	Vector3(-1, 1, 1),   Quat(Vector3(0, 1, 0), 0),
 	Vector3(-1, 1, -1), Quat(Vector3(0, 1, 0), -HALF_PIE),
 	
-	Vector3(1, -1, 1),  Quat(0.5, 0.5, 0.5, 0.5),
-	Vector3(1, -1, -1),  Quat(0.707, 0.707, 0, 0),
-
-	Vector3(-1, -1, 1),  Quat(Vector3(0, 0, 1), HALF_PIE),
 	Vector3(-1, -1, -1),   Quat(0.5, 0.5, -0.5, -0.5),
-]
+	Vector3(-1, -1, 1),  Quat(Vector3(0, 0, 1), HALF_PIE),
+	Vector3(1, -1, -1),  Quat(0.707, 0.707, 0, 0),
+	Vector3(1, -1, 1),  Quat(0.5, 0.5, 0.5, 0.5)
+]  #不要换hornTrans顺序
 
 var faceMat = load("res://01_ObjecManipulate/shaders/BoundingBoxFaceMat.tres")
 var planeMat = load("res://01_ObjecManipulate/shaders/BoundingBoxPositionPlaneMat.tres")
