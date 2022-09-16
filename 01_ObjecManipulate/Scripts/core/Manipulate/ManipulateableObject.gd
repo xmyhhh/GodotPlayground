@@ -18,8 +18,8 @@ onready var editorRoot =  get_tree().get_root().find_node("EditorRoot", true, fa
 var manipulateActionConfigDict = {
 	"Position" : {
 		"ActionDirection":["XAsix", "YAsix", "ZAsix"],
-		"ActionConstraint":ManipulateActionConstraintType.Free,
-		"ActionConstraintFactor":0.1
+		"ActionConstraint":ManipulateActionConstraintType.ByGrid,
+		"ActionConstraintFactor": 0.2
 	}, 
 	"Rotation" : {
 		"ActionDirection":["XAsix", "YAsix", "ZAsix"],
@@ -244,9 +244,15 @@ func PositionHandleProcess(event):
 					objStartPos = transform.origin
 				else:
 					var movePos = VecApproximateZero(intersection.position - projectionStartPos)
-					var vecApproximate = VecApproximateZero(movePos)
+					if(manipulateActionConfigDict["Position"]["ActionConstraint"] == ManipulateActionConstraintType.ByGrid):
+						movePos = Vector3(
+							movePos.x - fmod(movePos.x, manipulateActionConfigDict["Position"]["ActionConstraintFactor"]),
+							movePos.y - fmod(movePos.y, manipulateActionConfigDict["Position"]["ActionConstraintFactor"]), 
+							movePos.z - fmod(movePos.z, manipulateActionConfigDict["Position"]["ActionConstraintFactor"])
+							)
+						printt("movePos", movePos)
 					#region move obj
-					transform.origin = objStartPos + vecApproximate
+					transform.origin = objStartPos + movePos
 					#endregion
 
 func RotationHandleProcess(event):
