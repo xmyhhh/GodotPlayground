@@ -12,8 +12,8 @@ onready var ManipulateActionDIct  = {
 	"Rotation" : ["XAsix", "YAsix", "ZAsix"],
 	"Scale" : ["XAsix", "YAsix", "ZAsix"]
 }
-onready var enableMouseInput =true
-onready var projectionPlaneMaxSize = 50
+onready var enableMouseInput = true
+onready var projectionPlaneMaxSize = 150
 onready var scaleSpeed = 0.5
 
 var meshNode = null
@@ -258,7 +258,7 @@ func RotationHandleProcess(event):
 					var p1 = VecApproximateZero(intersection.position - global_translation)
 					var p2 = VecApproximateZero(projectionStartPos - global_translation)
 					transform.origin = Vector3(0, 0, 0)
-					var rotateAxis = objStartTrans.basis.xform(currentHandleInfo.handleData["normal"])
+					var rotateAxis = objStartTrans.basis.xform(currentHandleInfo.handleData["normal"]).normalized()
 					transform = objStartTrans.rotated(rotateAxis, -p1.signed_angle_to(p2, rotateAxis))
 					print("-p1.angle_to(p2)",-p1.angle_to(p2))
 					transform.origin = objStartTrans.origin
