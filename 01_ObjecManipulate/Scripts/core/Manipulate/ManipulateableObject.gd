@@ -232,7 +232,7 @@ func PositionHandleProcess(event):
 		var currentCamera = get_viewport().get_camera()
 		var spaceSatae = get_world().direct_space_state
 		var rayOrigin = currentCamera.project_ray_origin(event.position)
-		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * get_parent().manipulateMaxDistance
+		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * get_parent().manipulateSessionConfig["manipulateMaxDistance"]
 		var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFE, false, true)
 		if not intersection.empty()	:
 			#try get if it is ProjectionPlane
