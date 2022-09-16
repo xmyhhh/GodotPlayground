@@ -275,6 +275,7 @@ func RotationHandleProcess(event):
 			rotateFunc = RotateFuncHandleType.ByDistance
 		else:
 			rotateFunc = RotateFuncHandleType.ByProjectionPlane
+		rotateFunc = RotateFuncHandleType.ByDistance
 	else:
 		match rotateFunc:
 			RotateFuncHandleType.ByProjectionPlane:
@@ -325,16 +326,23 @@ func RotationHandleProcessByTouchDistance(event):
 		var normalProjectionVec3 = ProjectVec3ToScreenSurface(
 			to_global(objStartTrans.basis.xform(currentHandleInfo.handleData["normal"]))
 			)#(rotateStartTouchPos - event.position).length() * 0.05
-		var rotateAngle = Vector2(normalProjectionVec3.x, normalProjectionVec3.y).normalized().dot(event.position - rotateStartTouchPos) * RotationByTouchDistanceSpeed
-#		var rayOrigin = currentCamera.project_ray_origin(event.position)
-#		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) 
-#		var rotateCurrentRayDir = rayEnd - rayOrigin
-#		var angleSign = -rotateCurrentRayDir.signed_angle_to(rotateStartRayDir, transform.basis.xform(currentHandleInfo.handleData["normal"]))
-		
-
-		transform = objStartTrans.rotated(rotateAxis, -rotateAngle)
-
-		
+		var rotateDotCos = Vector2(normalProjectionVec3.x, normalProjectionVec3.y).normalized().dot(event.position - rotateStartTouchPos) / (event.position - rotateStartTouchPos).length()
+		var rotateAngle = pow((1- rotateDotCos * rotateDotCos), 0.5) * (event.position - rotateStartTouchPos).length() * RotationByTouchDistanceSpeed
+		var rayOrigin = currentCamera.project_ray_origin(event.position)
+		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) 
+		var rotateCurrentRayDir = rayEnd - rayOrigin
+		var angleSign = -rotateCurrentRayDir.signed_angle_to(rotateStartRayDir, transform.basis.xform(currentHandleInfo.handleData["normal"]))
+		if(angleSign<0):
+			transform = objStartTrans.rotated(rotateAxis, rotateAngle)
+		else:
+			
+			transform = objStartTrans.rotated(rotateAxis, -rotateAngle)
+		print("rotateAngle", rotateAngle)
+		print("normalProjectionVec3", normalProjectionVec3)
+		print("event.position - rotateStartTouchPos",event.position - rotateStartTouchPos)
+#		print("normal",to_global(objStartTrans.basis.xform(currentHandleInfo.handleData["normal"])))
+		print("_____________________")
+		print("_____________________")
 		transform.origin = objStartTrans.origin
 	
 
@@ -484,7 +492,9 @@ func TryGetIntersectionProjectionPlaneRoot(collider):
 func ProjectVec3ToScreenSurface(inVec3): #inVec3必须是世界坐标中向量
 	var currentCamera = get_viewport().get_camera()
 	var cameraGlobalz = currentCamera.global_transform.basis.z.normalized()
-	return currentCamera.to_local(inVec3 + cameraGlobalz * (inVec3.dot(inVec3)))
+	var a = inVec3 - cameraGlobalz * (cameraGlobalz.dot(inVec3))
+	print("a", a)
+	return currentCamera.to_local(inVec3 - cameraGlobalz * (cameraGlobalz.dot(inVec3)))
 
 func SetCollisionLayerValue(collisionObject: CollisionObject, layerNumber: int, value: bool) -> void:
 	if value:
