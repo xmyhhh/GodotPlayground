@@ -5,34 +5,41 @@ signal ManipulateEnd
 enum ManipulateActionType {Position, Rotation, Scale}
 enum ManipulateDirectionType {XAsix, YAsix, ZAsix}
 
+#region Export Variable
+
+export var delayInit = true   #Reduce initialization burden
+
+onready var enableMouseInput = true
+onready var projectionPlaneMaxSize = 150
+onready var scaleSpeed = 0.5
+#endregion
+
 onready var editorRoot =  get_tree().get_root().find_node("EditorRoot", true, false)
-onready var delayInit = true   #Reduce initialization burden
 onready var ManipulateActionDIct  = {
 	"Position" : ["XAsix", "YAsix", "ZAsix"], 
 	"Rotation" : ["XAsix", "YAsix", "ZAsix"],
 	"Scale" : ["XAsix", "YAsix", "ZAsix"]
 }
-onready var enableMouseInput = true
-onready var projectionPlaneMaxSize = 150
-onready var scaleSpeed = 0.5
 
 var meshNode = null
 var physicsBodyNode = null
 var collisonNodeArray = null
-
 var manipulateSessionRoot = null
 var manipulate3DGUIRootNode = null
 var boundingBoxRoot = null
-var collisonMaxPoint = null
-var collisonMinPoint = null
-var currentHandleInfo = null
 
+#region stateFlag
 var objInit = false
 var errorObj = false
 var isManipulating = false
 var isHandlePressing = false
-
+#endregion
 #region mapulate
+
+var collisonMaxPoint = null
+var collisonMinPoint = null
+var currentHandleInfo = null
+
 var projectionStartPos = null
 var projectionPlaneNode = null
 
@@ -56,10 +63,7 @@ func InputHandle(event):
 	if(not isHandlePressing):
 		return
 		
-	if event is InputEventScreenTouch and not event.is_pressed():
-		ReleseHandle()
-		return
-	if enableMouseInput and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and not event.pressed:
+	if isInputUnPress(event):
 		ReleseHandle()
 		return
 
@@ -406,4 +410,8 @@ func setCollisionLayerValue(collisionObject: CollisionObject, layerNumber: int, 
 	else:
 		collisionObject.collision_layer &= ~(1 << (layerNumber - 1))
 
+func isInputUnPress(event):
+	var screenUnPress = event is InputEventScreenTouch and not event.is_pressed()
+	var mouseUnPress = event is InputEventMouseButton and event.button_index == BUTTON_LEFT and not event.pressed
+	return screenUnPress or mouseUnPress
 #endregion
