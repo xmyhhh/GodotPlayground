@@ -3,24 +3,35 @@ signal ManipulateStart
 signal ManipulateEnd
 
 enum ManipulateActionType {Position, Rotation, Scale}
-enum ManipulateDirectionType {XAsix, YAsix, ZAsix}
+enum ManipulateActionDirectionType {XAsix, YAsix, ZAsix}
+enum ManipulateActionConstraintType {Free, ByGrid}
+#region Configurable Variable
+var delayInit = true   #Reduce initialization burden
+var projectionPlaneMaxSize = 150 setget SetProjectionPlaneMaxSize 
+var scaleSpeed = 0.5 
 
-#region Export Variable
 
-export var delayInit = true   #Reduce initialization burden
-
-onready var enableMouseInput = true
-onready var projectionPlaneMaxSize = 150
-onready var scaleSpeed = 0.5
 #endregion
 
 onready var editorRoot =  get_tree().get_root().find_node("EditorRoot", true, false)
-onready var ManipulateActionDIct  = {
-	"Position" : ["XAsix", "YAsix", "ZAsix"], 
-	"Rotation" : ["XAsix", "YAsix", "ZAsix"],
-	"Scale" : ["XAsix", "YAsix", "ZAsix"]
-}
 
+var manipulateActionConfigDict = {
+	"Position" : {
+		"ActionDirection":["XAsix", "YAsix", "ZAsix"],
+		"ActionConstraint":ManipulateActionConstraintType.Free,
+		"ActionConstraintFactor":0.1
+	}, 
+	"Rotation" : {
+		"ActionDirection":["XAsix", "YAsix", "ZAsix"],
+		"ActionConstraint":ManipulateActionConstraintType.Free,
+		"ActionConstraintFactor":15  #以度为单位
+	},
+	"Scale": {
+		"ActionDirection":["XAsix", "YAsix", "ZAsix"],
+		"ActionConstraint":ManipulateActionConstraintType.Free,
+		"ActionConstraintFactor":0.1  
+	}
+}
 var meshNode = null
 var physicsBodyNode = null
 var collisonNodeArray = null
@@ -34,6 +45,7 @@ var errorObj = false
 var isManipulating = false
 var isHandlePressing = false
 #endregion
+
 #region mapulate
 
 var collisonMaxPoint = null
@@ -106,6 +118,11 @@ func OnManipulateStart():
 	manipulate3DGUIRootNode.add_child(BoundingBoxGen(depth,width,height))
 	manipulate3DGUIRootNode.transform.origin = center
 
+func OnManipulateEnd():
+	if(errorObj or not isManipulating):
+		return
+	isManipulating = false
+	manipulate3DGUIRootNode.queue_free()
 
 func OnManipulateHandlePressedCallback(handleInfo):
 	isHandlePressing = true
@@ -114,13 +131,6 @@ func OnManipulateHandlePressedCallback(handleInfo):
 func OnManipulateHandleUnPressedCallback(handleInfo):
 	isHandlePressing = false
 	currentHandleInfo = null
-
-func OnManipulateEnd():
-	if(errorObj or not isManipulating):
-		return
-	isManipulating = false
-	manipulate3DGUIRootNode.queue_free()
-
 #endregion
 
 #region Internal Method
@@ -270,6 +280,7 @@ func RotationHandleProcess(event):
 					#region rotate obj
 				
 					#endregion
+
 func ScaleHandleProcess(event):
 	var currentCamera = get_viewport().get_camera()
 	if(not is_instance_valid(projectionPlaneNode)):
@@ -299,7 +310,6 @@ func ScaleHandleProcess(event):
 					transform.basis = objStartTrans.basis.scaled(Vector3(distance, distance, distance))
 					var newDiagonalGobalPos =  currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation
 					transform.origin = oldDiagonalGobalPos - newDiagonalGobalPos
-
 #endregion
 
 #region Tool Script
@@ -313,13 +323,13 @@ func VecAbs(inVec):
 
 func VecApproximateZero(inVec):
 	if(inVec is Vector3):
-		return Vector3(floatApproximateZero(inVec.x), floatApproximateZero(inVec.y), floatApproximateZero(inVec.z))
+		return Vector3(FloatApproximateZero(inVec.x), FloatApproximateZero(inVec.y), FloatApproximateZero(inVec.z))
 	if(inVec is Vector2):
-		return Vector2(floatApproximateZero(inVec.x), floatApproximateZero(inVec.y))
-		print("catch error in func VecApproximate:inVec can only be vector")
+		return Vector2(FloatApproximateZero(inVec.x), FloatApproximateZero(inVec.y))
+	print("catch error in func VecApproximate:inVec can only be vector")
 	return null
 	
-func floatApproximateZero(inFloat, clampMin = -0.01, clampMax = 0.01):
+func FloatApproximateZero(inFloat, clampMin = -0.01, clampMax = 0.01):
 	if(inFloat < clampMax and clampMin < inFloat):
 		return 0
 	return inFloat
@@ -374,8 +384,8 @@ func CreateProjectionPlane(normal, center):
 	var collisionShape = CollisionShape.new()
 	var boxShape = BoxShape.new()
 	
-	setCollisionLayerValue(area, 1, false)
-	setCollisionLayerValue(area, 2, true)
+	SetCollisionLayerValue(area, 1, false)
+	SetCollisionLayerValue(area, 2, true)
 
 	planeMesh.size = Vector2(projectionPlaneMaxSize, projectionPlaneMaxSize)
 	
@@ -404,7 +414,7 @@ func TryGetIntersectionProjectionPlaneRoot(collider):
 	return null
 
 
-func setCollisionLayerValue(collisionObject: CollisionObject, layerNumber: int, value: bool) -> void:
+func SetCollisionLayerValue(collisionObject: CollisionObject, layerNumber: int, value: bool) -> void:
 	if value:
 		collisionObject.collision_layer |= 1 << (layerNumber - 1)
 	else:
@@ -414,4 +424,14 @@ func isInputUnPress(event):
 	var screenUnPress = event is InputEventScreenTouch and not event.is_pressed()
 	var mouseUnPress = event is InputEventMouseButton and event.button_index == BUTTON_LEFT and not event.pressed
 	return screenUnPress or mouseUnPress
+#endregion
+
+#region setget
+func SetProjectionPlaneMaxSize(value:float):
+	if(value < 0):
+			print("ManipulateableObject.gd Error: can not set projectionPlaneMaxSize<0")
+	projectionPlaneMaxSize = value
+
+
+
 #endregion
