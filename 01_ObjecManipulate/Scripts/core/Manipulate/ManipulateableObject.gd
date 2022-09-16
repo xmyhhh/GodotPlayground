@@ -52,7 +52,7 @@ func _ready():
 	if(not delayInit):
 		InitObject()
 		
-func _input(event):
+func InputHandle(event):
 	if(not isHandlePressing):
 		return
 		

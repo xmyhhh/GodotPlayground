@@ -2,7 +2,7 @@ extends Spatial
 
 
 export var manipulateMaxDistance = 40
-export var enableMouseInput = true #for debug use
+
 
 var SessionEnable = true
 var rayOrigin:Vector3
@@ -12,12 +12,15 @@ var isHandlePressing = false
 
 #region Godot Callback 
 func _input(event):
-	if event is InputEventScreenTouch and event.is_pressed():
-		InputEventProcess(event.position)
-	elif enableMouseInput and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
-		InputEventProcess(event.position)
-		
-func InputEventProcess(inputPos):
+	if isInputPress(event):
+		PressEventProcess(event.position)
+	else:
+		OtherEventProcess(event)
+#endregion
+
+
+#region Internal Method
+func PressEventProcess(inputPos):
 	var currentCamera = get_viewport().get_camera()
 	var spaceSatae = get_world().direct_space_state
 	rayOrigin = currentCamera.project_ray_origin(inputPos)
@@ -29,6 +32,8 @@ func InputEventProcess(inputPos):
 		if(intersectionObjRoot != null):
 			if(currentManipulateObj != null and currentManipulateObj != intersectionObjRoot):
 				currentManipulateObj.OnManipulateEnd()
+			else:
+				HandleManipulationStarted()
 			currentManipulateObj = intersectionObjRoot
 			intersectionObjRoot.OnManipulateStart()
 			return
@@ -38,15 +43,21 @@ func InputEventProcess(inputPos):
 		if(intersectionHandleRoot != null):
 			currentManipulateObj.OnManipulateHandlePressedCallback(intersectionHandleRoot.handleInfo)
 			return
+			
+		#Step 3: EndManipulation
+		currentManipulateObj.OnManipulateEnd()
+		HandleManipulationEnded()
+		intersectionObjRoot == null
+func OtherEventProcess(event):
+	if(currentManipulateObj != null):
+		currentManipulateObj.InputHandle(event)
 
-#endregion
-
-
-#region Internal Method
 func HandleManipulationStarted():
+	print("HandleManipulationStarted")
 	pass
 	
 func HandleManipulationEnded():
+	print("HandleManipulationEnded")
 	pass
 	
 func TryGetIntersectionObjRoot(collider):
@@ -61,4 +72,12 @@ func TryGetIntersectionHandleRoot(collider):
 	if(collider.get_parent().get_parent().has_meta("ManipulateableHandle")):
 		return collider.get_parent().get_parent()
 	return null
+#endregion
+
+
+#region tool Scrpt
+func isInputPress(event):
+	var isScreenPressed = event is InputEventScreenTouch and event.is_pressed()
+	var isMouseClicked =  event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed
+	return isScreenPressed or isMouseClicked
 #endregion
