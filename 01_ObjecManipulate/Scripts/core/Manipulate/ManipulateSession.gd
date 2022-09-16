@@ -7,7 +7,7 @@ var manipulateSessionConfig = {
 		"enable": true,
 		"nodeName": "Ground"
 	},
-	"manipulateMaxDistance": 40
+	"manipulateMaxDistance": 80
 }
 
 var SessionEnable = true

@@ -5,9 +5,11 @@ signal ManipulateEnd
 enum ManipulateActionType {Position, Rotation, Scale}
 enum ManipulateActionDirectionType {XAsix, YAsix, ZAsix}
 enum ManipulateActionConstraintType {Free, ByGrid}
+enum RotateFuncHandleType{ByProjectionPlane, ByDistance}
 #region Configurable Variable
 var delayInit = true   #Reduce initialization burden
 var projectionPlaneMaxSize = 150 setget SetProjectionPlaneMaxSize 
+var RotationByTouchDistanceSpeed = 0.005
 var scaleSpeed = 0.5 
 
 
@@ -44,6 +46,8 @@ var objInit = false
 var errorObj = false
 var isManipulating = false
 var isHandlePressing = false
+
+
 #endregion
 
 #region mapulate
@@ -59,9 +63,13 @@ var objStartPos = null
 var objStartTrans = null
 var objStartScale = null
 
+var rotateStartTouchPos = null
 var diagonalDir
 var oldDiagonalGobalPos
 var distanceOrigin = null
+var rotateFunc = null  
+var rotateStartRayDir = null
+var rotateAxis = null
 #endregion
 
 #region Godot Callback
@@ -213,9 +221,14 @@ func ReleseHandle():
 			projectionPlaneNode.queue_free()
 			projectionStartPos = null
 	if(currentHandleInfo.handleType == ManipulateActionType.Rotation):
-		if(is_instance_valid(projectionPlaneNode)):
-			projectionPlaneNode.queue_free()
-			projectionStartPos = null
+		match rotateFunc:
+			RotateFuncHandleType.ByProjectionPlane:
+				if(is_instance_valid(projectionPlaneNode)):
+					projectionPlaneNode.queue_free()
+					projectionStartPos = null
+			RotateFuncHandleType.ByDistance:
+				rotateStartTouchPos = null
+		rotateFunc = null
 	if(currentHandleInfo.handleType == ManipulateActionType.Scale):
 		if(is_instance_valid(projectionPlaneNode)):
 			projectionPlaneNode.queue_free()
@@ -256,14 +269,29 @@ func PositionHandleProcess(event):
 					#endregion
 
 func RotationHandleProcess(event):
+	if(rotateFunc == null):
+		print("GetProjectionPlaneViewAngel", GetProjectionPlaneViewAngel(transform.basis.xform(currentHandleInfo.handleData["normal"]), event))
+		if(abs(GetProjectionPlaneViewAngel(transform.basis.xform(currentHandleInfo.handleData["normal"]), event) - 90) < 5):
+			rotateFunc = RotateFuncHandleType.ByDistance
+		else:
+			rotateFunc = RotateFuncHandleType.ByProjectionPlane
+	else:
+		match rotateFunc:
+			RotateFuncHandleType.ByProjectionPlane:
+				RotationHandleProcessByProjectionPlane(event)
+			RotateFuncHandleType.ByDistance:
+				RotationHandleProcessByTouchDistance(event)
+
+
+func RotationHandleProcessByProjectionPlane(event):
 	if(not is_instance_valid(projectionPlaneNode)):
-		CreateProjectionPlane(transform.basis.xform(currentHandleInfo.handleData["normal"]), transform.origin)
+		CreateProjectionPlane(transform.basis.xform(currentHandleInfo.handleData["normal"]), transform.origin)  #如果ProjectionPlane和当前视线方向平行，操作就会比较困难，这时候使用第二套逻辑
 		
 	if event is InputEventScreenDrag or event is InputEventMouseMotion:
 		var currentCamera = get_viewport().get_camera()
 		var spaceSatae = get_world().direct_space_state
 		var rayOrigin = currentCamera.project_ray_origin(event.position)
-		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * get_parent().manipulateMaxDistance
+		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * get_parent().manipulateSessionConfig["manipulateMaxDistance"]
 		var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFE, false, true)
 		if not intersection.empty()	:
 			#try get if it is ProjectionPlane
@@ -274,18 +302,41 @@ func RotationHandleProcess(event):
 					if((VecApproximateZero(intersection.position) - transform.origin).length() > 0.1):
 						projectionStartPos = VecApproximateZero(intersection.position)
 						objStartTrans = transform
+						rotateAxis = objStartTrans.basis.xform(currentHandleInfo.handleData["normal"]).normalized()
 				else:
 					var p1 = VecApproximateZero(intersection.position - global_translation)
 					var p2 = VecApproximateZero(projectionStartPos - global_translation)
 					transform.origin = Vector3(0, 0, 0)
-					var rotateAxis = objStartTrans.basis.xform(currentHandleInfo.handleData["normal"]).normalized()
+					
 					transform = objStartTrans.rotated(rotateAxis, -p1.signed_angle_to(p2, rotateAxis))
-					print("-p1.angle_to(p2)",-p1.angle_to(p2))
 					transform.origin = objStartTrans.origin
 
-					#region rotate obj
-				
-					#endregion
+func RotationHandleProcessByTouchDistance(event):
+	var currentCamera = get_viewport().get_camera()
+	if(rotateStartTouchPos == null):
+		rotateStartTouchPos = event.position
+		var rayOrigin = currentCamera.project_ray_origin(event.position)
+		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) 
+		rotateStartRayDir = rayEnd - rayOrigin
+		objStartTrans = transform
+		rotateAxis = objStartTrans.basis.xform(currentHandleInfo.handleData["normal"]).normalized()
+	else:
+		transform.origin = Vector3(0, 0, 0)
+		var normalProjectionVec3 = ProjectVec3ToScreenSurface(
+			to_global(objStartTrans.basis.xform(currentHandleInfo.handleData["normal"]))
+			)#(rotateStartTouchPos - event.position).length() * 0.05
+		var rotateAngle = Vector2(normalProjectionVec3.x, normalProjectionVec3.y).normalized().dot(event.position - rotateStartTouchPos) * RotationByTouchDistanceSpeed
+#		var rayOrigin = currentCamera.project_ray_origin(event.position)
+#		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) 
+#		var rotateCurrentRayDir = rayEnd - rayOrigin
+#		var angleSign = -rotateCurrentRayDir.signed_angle_to(rotateStartRayDir, transform.basis.xform(currentHandleInfo.handleData["normal"]))
+		
+
+		transform = objStartTrans.rotated(rotateAxis, -rotateAngle)
+
+		
+		transform.origin = objStartTrans.origin
+	
 
 func ScaleHandleProcess(event):
 	var currentCamera = get_viewport().get_camera()
@@ -414,11 +465,26 @@ func CreateProjectionPlane(normal, center):
 	boxShape.extents =  boxSize
 	collisionShape.shape = boxShape
 
+func GetProjectionPlaneViewAngel(planeNormal, event):
+	var currentCamera = get_viewport().get_camera()
+	var rayOrigin = currentCamera.project_ray_origin(event.position)
+	var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) 
+	print("planeNormal",planeNormal)
+	print("ray", rayEnd - rayOrigin)
+	return rad2deg(
+		planeNormal.angle_to(rayEnd - rayOrigin)
+		)
+
 func TryGetIntersectionProjectionPlaneRoot(collider):
 	if(collider.get_parent().name == "ProjectionPlane"):
 		return collider.get_parent()
 	return null
 
+
+func ProjectVec3ToScreenSurface(inVec3): #inVec3必须是世界坐标中向量
+	var currentCamera = get_viewport().get_camera()
+	var cameraGlobalz = currentCamera.global_transform.basis.z.normalized()
+	return currentCamera.to_local(inVec3 + cameraGlobalz * (inVec3.dot(inVec3)))
 
 func SetCollisionLayerValue(collisionObject: CollisionObject, layerNumber: int, value: bool) -> void:
 	if value:
