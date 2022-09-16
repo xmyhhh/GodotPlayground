@@ -28,6 +28,8 @@ var hornTrans = [
 	Vector3(1, 1, 1),   Quat(Vector3(0, 1, 0), HALF_PIE),
 	Vector3(1, 1, -1), Quat(Vector3(0, 1, 0), PIE),
 	Vector3(-1, 1, 1),   Quat(Vector3(0, 1, 0), 0),
+	Vector3(-1, 1, 1),   Quat(Vector3(0, 1, 0), 0),
+	Vector3(-1, 1, 1),   Quat(Vector3(0, 1, 0), 0),
 	Vector3(-1, 1, -1), Quat(Vector3(0, 1, 0), -HALF_PIE),
 	
 	Vector3(-1, -1, -1),   Quat(0.5, 0.5, -0.5, -0.5),

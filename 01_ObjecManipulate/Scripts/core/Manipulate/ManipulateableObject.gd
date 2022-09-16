@@ -79,7 +79,7 @@ func InitObject():
 		return
 	objInit = true
 	meshNode = editorRoot.toolScript.FindOneNodeByType(self, "MeshInstance")
-	physicsBodyNode = editorRoot.toolScript.FindOneNodeByType(self, "PhysicsBody")
+	physicsBodyNode = editorRoot.toolScript.FindOneNodeByType(self, "Area")
 	collisonNodeArray = editorRoot.toolScript.FindMultiNodeByType(physicsBodyNode, "CollisionShape")
 	if(not meshNode or not physicsBodyNode or not collisonNodeArray):
 		print("Catach Error: collisonNode, meshNode and physicsBodyNode of ManeuverableObject can not be null!")
@@ -222,7 +222,6 @@ func PositionHandleProcess(event):
 		var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFE, false, true)
 		if not intersection.empty()	:
 			#try get if it is ProjectionPlane
-			
 			var intersectionPlaneCollideroot = TryGetIntersectionProjectionPlaneRoot(intersection.collider)
 
 			if(intersectionPlaneCollideroot != null):
@@ -238,7 +237,6 @@ func PositionHandleProcess(event):
 
 func RotationHandleProcess(event):
 	if(not is_instance_valid(projectionPlaneNode)):
-		
 		CreateProjectionPlane(transform.basis.xform(currentHandleInfo.handleData["normal"]), transform.origin)
 		
 	if event is InputEventScreenDrag or event is InputEventMouseMotion:
@@ -260,7 +258,9 @@ func RotationHandleProcess(event):
 					var p1 = VecApproximateZero(intersection.position - global_translation)
 					var p2 = VecApproximateZero(projectionStartPos - global_translation)
 					transform.origin = Vector3(0, 0, 0)
-					transform = objStartTrans.rotated((p1.cross(p2).normalized()), -p1.angle_to(p2))
+					var rotateAxis = objStartTrans.basis.xform(currentHandleInfo.handleData["normal"])
+					transform = objStartTrans.rotated(rotateAxis, -p1.signed_angle_to(p2, rotateAxis))
+					print("-p1.angle_to(p2)",-p1.angle_to(p2))
 					transform.origin = objStartTrans.origin
 
 					#region rotate obj
@@ -269,10 +269,10 @@ func RotationHandleProcess(event):
 func ScaleHandleProcess(event):
 	var currentCamera = get_viewport().get_camera()
 	if(not is_instance_valid(projectionPlaneNode)):
-		CreateProjectionPlane(transform.basis.xform(currentCamera.global_translation - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation), transform.basis.xform(currentHandleInfo.handleData["diagonalMeshInstNode"].transform.origin) + transform.origin)
-
+		CreateProjectionPlane(
+			transform.basis.xform(currentCamera.global_translation - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation), 
+			transform.basis.xform(currentHandleInfo.handleData["diagonalMeshInstNode"].transform.origin) + transform.origin)
 	if event is InputEventScreenDrag or event is InputEventMouseMotion:
-		
 		var spaceSatae = get_world().direct_space_state
 		var rayOrigin = currentCamera.project_ray_origin(event.position)
 		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * get_parent().manipulateMaxDistance
@@ -288,8 +288,6 @@ func ScaleHandleProcess(event):
 						diagonalDir = currentHandleInfo.handleData["origin"]   #obj local dir
 						oldDiagonalGobalPos =  currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation  #world pos
 				else:
-
-				
 					var distanceCurrent = (intersection.position - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation).length()
 					var distance = clamp((distanceCurrent - distanceOrigin) * scaleSpeed + 1, 0.25, 4) 
 
