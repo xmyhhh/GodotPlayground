@@ -17,12 +17,13 @@ extents = Vector3( 10, 0.5, 10 )
 [node name="EditorRoot" type="Spatial"]
 script = ExtResource( 2 )
 
-[node name="Ground" type="MeshInstance" parent="."]
+[node name="Ground" type="StaticBody" parent="."]
+
+[node name="GroundMesh" type="MeshInstance" parent="Ground"]
 mesh = SubResource( 1 )
+skeleton = NodePath("../..")
 
-[node name="StaticBody" type="StaticBody" parent="Ground"]
-
-[node name="CollisionShape" type="CollisionShape" parent="Ground/StaticBody"]
+[node name="CollisionShape" type="CollisionShape" parent="Ground"]
 shape = SubResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]

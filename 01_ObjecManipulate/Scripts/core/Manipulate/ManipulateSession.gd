@@ -1,8 +1,14 @@
 extends Spatial
 
 
-export var manipulateMaxDistance = 40
 
+var manipulateSessionConfig = {
+	"ground":{
+		"enable": true,
+		"nodeName": "Ground"
+	},
+	"manipulateMaxDistance": 40
+}
 
 var SessionEnable = true
 var rayOrigin:Vector3
@@ -24,7 +30,7 @@ func PressEventProcess(inputPos):
 	var currentCamera = get_viewport().get_camera()
 	var spaceSatae = get_world().direct_space_state
 	rayOrigin = currentCamera.project_ray_origin(inputPos)
-	rayEnd = rayOrigin + currentCamera.project_ray_normal(inputPos) * manipulateMaxDistance
+	rayEnd = rayOrigin + currentCamera.project_ray_normal(inputPos) * manipulateSessionConfig["manipulateMaxDistance"]
 	var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFF, true, true)
 	if not intersection.empty() :
 		#Step 1: try get if it is IntersectionObj
