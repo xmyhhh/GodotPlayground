@@ -9,10 +9,8 @@ enum RotateFuncHandleType{ByProjectionPlane, ByDistance}
 #region Configurable Variable
 var delayInit = true   #Reduce initialization burden
 var projectionPlaneMaxSize = 150 setget SetProjectionPlaneMaxSize 
-var RotationByTouchDistanceSpeed = 0.005
+var RotationByTouchDistanceSpeed = 0.009
 var scaleSpeed = 0.5 
-
-
 #endregion
 
 onready var editorRoot =  get_tree().get_root().find_node("EditorRoot", true, false)
@@ -68,8 +66,10 @@ var diagonalDir
 var oldDiagonalGobalPos
 var distanceOrigin = null
 var rotateFunc = null  
-var rotateStartRayDir = null
+var rotateStartDir = null
 var rotateAxis = null
+var screebSurfaceVec3_0 = null
+var screebSurfaceVec3_1 = null
 #endregion
 
 #region Godot Callback
@@ -172,7 +172,7 @@ func BoundingBoxGen(depth, width, height):
 		meshInst.handleInfo.handleType = ManipulateActionType.Rotation
 		meshInst.transform.origin = editorRoot.eadgTrans[3 * i] * boxSizeHalf
 		meshInst.transform.basis = Basis(editorRoot.eadgTrans[3 * i + 1])
-		meshInst.handleInfo.handleData = {"normal": editorRoot.eadgTrans[3 * i + 2]}
+		meshInst.handleInfo.handleData = {"boxSizeHalf":boxSizeHalf ,"edgePos": editorRoot.eadgTrans[3 * i] * boxSizeHalf, "normal": editorRoot.eadgTrans[3 * i + 2]}
 	#Step 2: 8 horn gen
 	var hornTmpArray = []
 	for i in range(8):
@@ -316,33 +316,42 @@ func RotationHandleProcessByTouchDistance(event):
 	var currentCamera = get_viewport().get_camera()
 	if(rotateStartTouchPos == null):
 		rotateStartTouchPos = event.position
-		var rayOrigin = currentCamera.project_ray_origin(event.position)
-		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) 
-		rotateStartRayDir = rayEnd - rayOrigin
+		
+		
 		objStartTrans = transform
 		rotateAxis = objStartTrans.basis.xform(currentHandleInfo.handleData["normal"]).normalized()
+		var edgeEnd = GetEdgeEnd(currentHandleInfo.handleData["edgePos"], currentHandleInfo.handleData["boxSizeHalf"])
+		screebSurfaceVec3_0 = ProjectVec3ToScreenSurface(
+			to_global(objStartTrans.basis.xform(
+				edgeEnd[0]
+				)
+			)
+		)
+		screebSurfaceVec3_1 = ProjectVec3ToScreenSurface(
+			to_global(objStartTrans.basis.xform(
+				edgeEnd[1]
+				)
+			)
+		)
+
+		rotateStartDir = Cal2DVerticalVec(Vector2((screebSurfaceVec3_0 - screebSurfaceVec3_1).x, (screebSurfaceVec3_0 - screebSurfaceVec3_1).y))
 	else:
 		transform.origin = Vector3(0, 0, 0)
-		var normalProjectionVec3 = ProjectVec3ToScreenSurface(
-			to_global(objStartTrans.basis.xform(currentHandleInfo.handleData["normal"]))
-			)#(rotateStartTouchPos - event.position).length() * 0.05
-		var rotateDotCos = Vector2(normalProjectionVec3.x, normalProjectionVec3.y).normalized().dot(event.position - rotateStartTouchPos) / (event.position - rotateStartTouchPos).length()
-		var rotateAngle = pow((1- rotateDotCos * rotateDotCos), 0.5) * (event.position - rotateStartTouchPos).length() * RotationByTouchDistanceSpeed
-		var rayOrigin = currentCamera.project_ray_origin(event.position)
-		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) 
-		var rotateCurrentRayDir = rayEnd - rayOrigin
-		var angleSign = -rotateCurrentRayDir.signed_angle_to(rotateStartRayDir, transform.basis.xform(currentHandleInfo.handleData["normal"]))
-		if(angleSign<0):
-			transform = objStartTrans.rotated(rotateAxis, rotateAngle)
-		else:
-			
-			transform = objStartTrans.rotated(rotateAxis, -rotateAngle)
+		#(rotateStartTouchPos - event.position).length() * 0.05
+
+		var rotateAngle = rotateStartDir.dot(event.position - rotateStartTouchPos) * RotationByTouchDistanceSpeed
+#
+#
+		transform = objStartTrans.rotated(rotateAxis, rotateAngle)
 		print("rotateAngle", rotateAngle)
-		print("normalProjectionVec3", normalProjectionVec3)
-		print("event.position - rotateStartTouchPos",event.position - rotateStartTouchPos)
-#		print("normal",to_global(objStartTrans.basis.xform(currentHandleInfo.handleData["normal"])))
+		print("screebSurfaceVec3_0",screebSurfaceVec3_0)
+		print("screebSurfaceVec3_1",screebSurfaceVec3_1)
+		print("rotateStartDir", rotateStartDir)
+#		print("event.position - rotateStartTouchPos",event.position - rotateStartTouchPos)
+#
+##		print("normal",to_global(objStartTrans.basis.xform(currentHandleInfo.handleData["normal"])))
 		print("_____________________")
-		print("_____________________")
+#		print("_____________________")
 		transform.origin = objStartTrans.origin
 	
 
@@ -382,6 +391,15 @@ func Vec3Compare(source, target):
 	if(source.x <= target.x and source.y <= target.y and source.z <= target.z):
 		return true
 	return false
+
+func NormalChange(inVec):
+	if(inVec.x==1):
+		return Vector3(0, 1, 0);
+	if(inVec.y==1):
+		return Vector3(0, 0, 1);
+	if(inVec.z==1):
+		return Vector3(1, 0, 0);
+		
 func VecAbs(inVec):
 	if(inVec is Vector3):
 		return Vector3(abs(inVec.x), abs(inVec.y), abs(inVec.z))
@@ -488,13 +506,11 @@ func TryGetIntersectionProjectionPlaneRoot(collider):
 		return collider.get_parent()
 	return null
 
-
 func ProjectVec3ToScreenSurface(inVec3): #inVec3必须是世界坐标中向量
 	var currentCamera = get_viewport().get_camera()
 	var cameraGlobalz = currentCamera.global_transform.basis.z.normalized()
 	var a = inVec3 - cameraGlobalz * (cameraGlobalz.dot(inVec3))
-	print("a", a)
-	return currentCamera.to_local(inVec3 - cameraGlobalz * (cameraGlobalz.dot(inVec3)))
+	return inVec3 - cameraGlobalz * (cameraGlobalz.dot(inVec3))
 
 func SetCollisionLayerValue(collisionObject: CollisionObject, layerNumber: int, value: bool) -> void:
 	if value:
@@ -506,6 +522,19 @@ func isInputUnPress(event):
 	var screenUnPress = event is InputEventScreenTouch and not event.is_pressed()
 	var mouseUnPress = event is InputEventMouseButton and event.button_index == BUTTON_LEFT and not event.pressed
 	return screenUnPress or mouseUnPress
+	
+func GetEdgeEnd(edgePos, boxHalfSize):
+	if(edgePos.x == 0):
+		return [edgePos + Vector3(boxHalfSize.x, 0, 0), edgePos - Vector3(boxHalfSize.x, 0, 0)];
+	if(edgePos.y == 0):
+		return [edgePos + Vector3(0, boxHalfSize.y, 0), edgePos - Vector3(0, boxHalfSize.y, 0)];
+	if(edgePos.z == 0):
+		return [edgePos + Vector3(0, 0, boxHalfSize.z), edgePos - Vector3(0, 0, boxHalfSize.z)];
+		
+		
+func Cal2DVerticalVec(inVec:Vector2):
+	var artan = atan(inVec.x / (inVec.y + 0.0001))
+	return Vector2(cos(artan), sin(artan)).normalized()
 #endregion
 
 #region setget
@@ -513,7 +542,4 @@ func SetProjectionPlaneMaxSize(value:float):
 	if(value < 0):
 			print("ManipulateableObject.gd Error: can not set projectionPlaneMaxSize<0")
 	projectionPlaneMaxSize = value
-
-
-
 #endregion

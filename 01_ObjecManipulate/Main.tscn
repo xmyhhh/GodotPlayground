@@ -27,7 +27,8 @@ skeleton = NodePath("../..")
 shape = SubResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.73678, 4.22911 )
+transform = Transform( 0.805763, 0, 0.592238, 0, 1, 0, -0.592238, 0, 0.805763, 4.45206, 3.02559, 5.18434 )
+fov = 64.6875
 size = 20.0
 near = 0.1
 far = 8192.0
