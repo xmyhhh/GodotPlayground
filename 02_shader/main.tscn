@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=2]
+
+[sub_resource type="ViewportTexture" id=1]
+
+[sub_resource type="PlaneMesh" id=2]
+
+[sub_resource type="Shader" id=3]
+code = "shader_type spatial;
+
+float stepping(float t){
+    if(t<0.)return -1.+pow(1.+t,2.);
+    else return 1.-pow(1.-t,2.);
+}
+
+
+
+void fragment()
+{
+//	vec2 uv = (fragCoord*2.-iResolution.xy)/iResolution.y;
+	vec2 uv = (UV - vec2(0.5,0.5))* 2.0;
+    vec4 color = vec4(.0,.0,.0,.0);
+    uv = normalize(uv) * length(uv);
+    for(int i=0;i<12;i++){
+        float t = TIME + float(i)*3.141592/12.*(5.+1.*stepping(sin(TIME*3.)));
+        vec2 p = vec2(cos(t),sin(t));
+        p *= cos(TIME + float(i)*3.141592*cos(TIME/8.));
+        vec3 col = cos(vec3(0,1,-1)*3.141592*2./3.+3.141925*(TIME/2.+float(i)/5.)) * 0.5 + 0.5;
+        color += vec4(0.05/length(uv-p*0.9)*col,1.0);
+    }
+    color.xyz = pow(color.xyz,vec3(3.));
+    color.w = 1.0;
+	ALBEDO = color.rgb;
+	ALPHA = color.a;
+}"
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
+
+[node name="Spatial" type="Spatial"]
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+texture = SubResource( 1 )
+
+[node name="Viewport" type="Viewport" parent="Sprite3D"]
+size = Vector2( 512, 512 )
+
+[node name="ColorRect" type="ColorRect" parent="Sprite3D/Viewport"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.312981, -0.949759, 0, 0.949759, 0.312981, 0, 0, 0 )
+mesh = SubResource( 2 )
+material/0 = SubResource( 4 )
