@@ -38,3 +38,6 @@ var hornTrans = [
 
 var faceMat = load("res://01_ObjecManipulate/shaders/BoundingBoxFaceMat.tres")
 var planeMat = load("res://01_ObjecManipulate/shaders/BoundingBoxPositionPlaneMat.tres")
+
+onready var debugNode0 = $Control
+onready var debugNode1 = $Control2

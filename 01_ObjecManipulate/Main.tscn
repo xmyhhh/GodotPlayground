@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateableObject.gd" type="Script" id=1]
 [ext_resource path="res://01_ObjecManipulate/Scripts/Main.gd" type="Script" id=2]
 [ext_resource path="res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateSession.gd" type="Script" id=3]
+[ext_resource path="res://01_ObjecManipulate/DebugDraw2D.gd" type="Script" id=4]
 
 [sub_resource type="CubeMesh" id=1]
 size = Vector3( 20, 1, 20 )
@@ -75,28 +76,12 @@ shape = SubResource( 4 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.504768 )
 shape = SubResource( 4 )
 
-[node name="GUI" type="Control" parent="."]
-margin_right = 40.0
-margin_bottom = 40.0
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 4 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GUI"]
-margin_right = 215.0
-margin_bottom = 77.0
-
-[node name="Button" type="Button" parent="GUI/VBoxContainer"]
-margin_right = 215.0
-margin_bottom = 36.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-text = "start"
-
-[node name="Button2" type="Button" parent="GUI/VBoxContainer"]
-margin_top = 40.0
-margin_right = 215.0
-margin_bottom = 77.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-text = "end"
-
-[connection signal="pressed" from="GUI/VBoxContainer/Button" to="Objects/Obj0" method="OnManipulateStartCallback"]
-[connection signal="pressed" from="GUI/VBoxContainer/Button2" to="Objects/Obj0" method="OnManipulateEndCallback"]
+[node name="Control2" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 4 )

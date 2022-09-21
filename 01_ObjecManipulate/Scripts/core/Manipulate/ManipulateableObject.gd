@@ -2,6 +2,9 @@ extends Spatial
 signal ManipulateStart
 signal ManipulateEnd
 
+
+
+
 enum ManipulateActionType {Position, Rotation, Scale}
 enum ManipulateActionDirectionType {XAsix, YAsix, ZAsix}
 enum ManipulateActionConstraintType {Free, ByGrid}
@@ -172,7 +175,7 @@ func BoundingBoxGen(depth, width, height):
 		meshInst.handleInfo.handleType = ManipulateActionType.Rotation
 		meshInst.transform.origin = editorRoot.eadgTrans[3 * i] * boxSizeHalf
 		meshInst.transform.basis = Basis(editorRoot.eadgTrans[3 * i + 1])
-		meshInst.handleInfo.handleData = {"boxSizeHalf":boxSizeHalf ,"edgePos": editorRoot.eadgTrans[3 * i] * boxSizeHalf, "normal": editorRoot.eadgTrans[3 * i + 2]}
+		meshInst.handleInfo.handleData = {"boxSizeHalf":boxSizeHalf, "edgePos": editorRoot.eadgTrans[3 * i] * boxSizeHalf, "normal": editorRoot.eadgTrans[3 * i + 2]}
 	#Step 2: 8 horn gen
 	var hornTmpArray = []
 	for i in range(8):
@@ -321,20 +324,18 @@ func RotationHandleProcessByTouchDistance(event):
 		objStartTrans = transform
 		rotateAxis = objStartTrans.basis.xform(currentHandleInfo.handleData["normal"]).normalized()
 		var edgeEnd = GetEdgeEnd(currentHandleInfo.handleData["edgePos"], currentHandleInfo.handleData["boxSizeHalf"])
-		screebSurfaceVec3_0 = ProjectVec3ToScreenSurface(
-			to_global(objStartTrans.basis.xform(
-				edgeEnd[0]
-				)
-			)
+		screebSurfaceVec3_0 = currentCamera.unproject_position(
+			boundingBoxRoot.to_global(edgeEnd[0])
 		)
-		screebSurfaceVec3_1 = ProjectVec3ToScreenSurface(
-			to_global(objStartTrans.basis.xform(
-				edgeEnd[1]
-				)
-			)
+		screebSurfaceVec3_1 = currentCamera.unproject_position(
+			boundingBoxRoot.to_global(edgeEnd[1])
 		)
+		editorRoot.debugNode0.center = screebSurfaceVec3_0
+		editorRoot.debugNode0.color = Color(.0, 1.0, 0.0)
+		editorRoot.debugNode1.center = screebSurfaceVec3_1
 
-		rotateStartDir = Cal2DVerticalVec(Vector2((screebSurfaceVec3_0 - screebSurfaceVec3_1).x, (screebSurfaceVec3_0 - screebSurfaceVec3_1).y))
+		
+		rotateStartDir = Cal2DVerticalVec(screebSurfaceVec3_0 - screebSurfaceVec3_1)
 	else:
 		transform.origin = Vector3(0, 0, 0)
 		#(rotateStartTouchPos - event.position).length() * 0.05
@@ -342,7 +343,7 @@ func RotationHandleProcessByTouchDistance(event):
 		var rotateAngle = rotateStartDir.dot(event.position - rotateStartTouchPos) * RotationByTouchDistanceSpeed
 #
 #
-		transform = objStartTrans.rotated(rotateAxis, rotateAngle)
+		transform = objStartTrans.rotated(rotateAxis, rotateAngle)  #正rotateAngle对于轴rotateAxis来说是逆时针旋转
 		print("rotateAngle", rotateAngle)
 		print("screebSurfaceVec3_0",screebSurfaceVec3_0)
 		print("screebSurfaceVec3_1",screebSurfaceVec3_1)
@@ -533,8 +534,8 @@ func GetEdgeEnd(edgePos, boxHalfSize):
 		
 		
 func Cal2DVerticalVec(inVec:Vector2):
-	var artan = atan(inVec.x / (inVec.y + 0.0001))
-	return Vector2(cos(artan), sin(artan)).normalized()
+	var res = Vector3(0, 0, 1).cross(Vector3(inVec.x, inVec.y, 0))
+	return Vector2(res.x, res.y).normalized()
 #endregion
 
 #region setget
