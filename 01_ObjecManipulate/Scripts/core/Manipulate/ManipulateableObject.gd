@@ -2,9 +2,6 @@ extends Spatial
 signal ManipulateStart
 signal ManipulateEnd
 
-
-
-
 enum ManipulateActionType {Position, Rotation, Scale}
 enum ManipulateActionDirectionType {XAsix, YAsix, ZAsix}
 enum ManipulateActionConstraintType {Free, ByGrid}
@@ -13,7 +10,8 @@ enum RotateFuncHandleType{ByProjectionPlane, ByDistance}
 var delayInit = true   #Reduce initialization burden
 var projectionPlaneMaxSize = 150 setget SetProjectionPlaneMaxSize 
 var RotationByTouchDistanceSpeed = 0.009
-var scaleSpeed = 0.5 
+var scaleSpeed = 0.00005 
+var debugMode = true
 #endregion
 
 onready var editorRoot =  get_tree().get_root().find_node("EditorRoot", true, false)
@@ -47,12 +45,9 @@ var objInit = false
 var errorObj = false
 var isManipulating = false
 var isHandlePressing = false
-
-
 #endregion
 
 #region mapulate
-
 var collisonMaxPoint = null
 var collisonMinPoint = null
 var currentHandleInfo = null
@@ -64,10 +59,10 @@ var objStartPos = null
 var objStartTrans = null
 var objStartScale = null
 
-var rotateStartTouchPos = null
-var diagonalDir
+var startTouchPos = null
+
 var oldDiagonalGobalPos
-var distanceOrigin = null
+
 var rotateFunc = null  
 var rotateStartDir = null
 var rotateAxis = null
@@ -230,12 +225,10 @@ func ReleseHandle():
 					projectionPlaneNode.queue_free()
 					projectionStartPos = null
 			RotateFuncHandleType.ByDistance:
-				rotateStartTouchPos = null
+				startTouchPos = null
 		rotateFunc = null
 	if(currentHandleInfo.handleType == ManipulateActionType.Scale):
-		if(is_instance_valid(projectionPlaneNode)):
-			projectionPlaneNode.queue_free()
-			projectionStartPos = null
+		startTouchPos = null
 	isHandlePressing = false
 	currentHandleInfo = null
 	pass
@@ -317,10 +310,8 @@ func RotationHandleProcessByProjectionPlane(event):
 
 func RotationHandleProcessByTouchDistance(event):
 	var currentCamera = get_viewport().get_camera()
-	if(rotateStartTouchPos == null):
-		rotateStartTouchPos = event.position
-		
-		
+	if(startTouchPos == null):
+		startTouchPos = event.position
 		objStartTrans = transform
 		rotateAxis = objStartTrans.basis.xform(currentHandleInfo.handleData["normal"]).normalized()
 		var edgeEnd = GetEdgeEnd(currentHandleInfo.handleData["edgePos"], currentHandleInfo.handleData["boxSizeHalf"])
@@ -333,58 +324,38 @@ func RotationHandleProcessByTouchDistance(event):
 		editorRoot.debugNode0.center = screebSurfaceVec3_0
 		editorRoot.debugNode0.color = Color(.0, 1.0, 0.0)
 		editorRoot.debugNode1.center = screebSurfaceVec3_1
-
-		
 		rotateStartDir = Cal2DVerticalVec(screebSurfaceVec3_0 - screebSurfaceVec3_1)
 	else:
 		transform.origin = Vector3(0, 0, 0)
-		#(rotateStartTouchPos - event.position).length() * 0.05
-
-		var rotateAngle = rotateStartDir.dot(event.position - rotateStartTouchPos) * RotationByTouchDistanceSpeed
-#
-#
+		var rotateAngle = rotateStartDir.dot(event.position - startTouchPos) * RotationByTouchDistanceSpeed
 		transform = objStartTrans.rotated(rotateAxis, rotateAngle)  #正rotateAngle对于轴rotateAxis来说是逆时针旋转
-		print("rotateAngle", rotateAngle)
-		print("screebSurfaceVec3_0",screebSurfaceVec3_0)
-		print("screebSurfaceVec3_1",screebSurfaceVec3_1)
-		print("rotateStartDir", rotateStartDir)
-#		print("event.position - rotateStartTouchPos",event.position - rotateStartTouchPos)
-#
-##		print("normal",to_global(objStartTrans.basis.xform(currentHandleInfo.handleData["normal"])))
-		print("_____________________")
-#		print("_____________________")
 		transform.origin = objStartTrans.origin
 	
 
 func ScaleHandleProcess(event):
 	var currentCamera = get_viewport().get_camera()
-	if(not is_instance_valid(projectionPlaneNode)):
-		CreateProjectionPlane(
-			transform.basis.xform(currentCamera.global_translation - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation), 
-			transform.basis.xform(currentHandleInfo.handleData["diagonalMeshInstNode"].transform.origin) + transform.origin)
-	if event is InputEventScreenDrag or event is InputEventMouseMotion:
-		var spaceSatae = get_world().direct_space_state
-		var rayOrigin = currentCamera.project_ray_origin(event.position)
-		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * get_parent().manipulateMaxDistance
-		var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFE, false, true)
-		if not intersection.empty()	:
-			#try get if it is ProjectionPlane
-			var intersectionPlaneCollideroot = TryGetIntersectionProjectionPlaneRoot(intersection.collider)
-			if(intersectionPlaneCollideroot != null):
-				if(projectionStartPos == null):
-						projectionStartPos = VecApproximateZero(intersection.position)
-						objStartTrans = transform
-						distanceOrigin =  (intersection.position - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation).length()
-						diagonalDir = currentHandleInfo.handleData["origin"]   #obj local dir
-						oldDiagonalGobalPos =  currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation  #world pos
-				else:
-					var distanceCurrent = (intersection.position - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation).length()
-					var distance = clamp((distanceCurrent - distanceOrigin) * scaleSpeed + 1, 0.25, 4) 
+	if(startTouchPos == null):
+		startTouchPos = event.position
+		objStartTrans = transform
+		oldDiagonalGobalPos =  currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation  #world pos
 
-					transform.origin = Vector3(0, 0, 0)
-					transform.basis = objStartTrans.basis.scaled(Vector3(distance, distance, distance))
-					var newDiagonalGobalPos =  currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation
-					transform.origin = oldDiagonalGobalPos - newDiagonalGobalPos
+		screebSurfaceVec3_0 = currentCamera.unproject_position(
+			boundingBoxRoot.to_global(currentHandleInfo.handleData["origin"])
+		)
+		screebSurfaceVec3_1 = currentCamera.unproject_position(
+			boundingBoxRoot.to_global(currentHandleInfo.handleData["diagonalMeshInstNode"].transform.origin)
+		)
+		editorRoot.debugNode0.center = screebSurfaceVec3_0
+		editorRoot.debugNode0.color = Color(.0, 1.0, 0.0)
+		editorRoot.debugNode1.center = screebSurfaceVec3_1
+	else:
+#		var distanceCurrent = (intersection.position - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation).length()
+		var distance = (screebSurfaceVec3_0 - screebSurfaceVec3_1).dot(event.position - startTouchPos) * scaleSpeed + 1
+		print(distance)
+		transform.origin = Vector3(0, 0, 0)
+		transform.basis = objStartTrans.basis.scaled(Vector3(distance, distance, distance))
+		var newDiagonalGobalPos =  currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation
+		transform.origin = oldDiagonalGobalPos - newDiagonalGobalPos
 #endregion
 
 #region Tool Script
