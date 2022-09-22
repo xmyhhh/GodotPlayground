@@ -1,11 +1,28 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://02_shader/Control.gd" type="Script" id=1]
 
 [sub_resource type="Shader" id=6]
 code = "shader_type spatial;
 render_mode blend_add,unshaded;
+
+uniform float GatherMax = 1.;
+uniform float GatherMin = -1.;
+uniform float Radius = 1.0;
+uniform bool Symmetrical = false;
+uniform vec3 CenterColor = vec3(0.5, 0.8, 1.);
+uniform int numberPoint = 10;
+uniform float Floodlight = 5.0;
+uniform float LightSpotRadius = 0.02;
+uniform float SteppingFactor = 0.8;
+
 float stepping(float t){
     if(t<0.)return -1.+pow(1.+t,2.);
     else return 1.-pow(1.-t,2.);
+}
+float reduce(float input, float targetMin, float targetMax, float sourceMin, float sourceMax){
+	return (input - sourceMin)/(sourceMax - sourceMin) * (targetMax - targetMin) + targetMin;
+//	return input;
 }
 
 void vertex(){
@@ -16,18 +33,34 @@ MODELVIEW_MATRIX = MODELVIEW_MATRIX * mat4(vec4(length(WORLD_MATRIX[0].xyz), 0.0
 
 void fragment()
 {
+	float gatherMin = GatherMin;
+	float gatherMax = GatherMax;
+	vec3 centerColor = CenterColor;
+	if(Symmetrical){
+		gatherMin = -GatherMax;
+	}
+	if(CenterColor.x > 1.){
+//		centerColor = CenterColor/255.;
+	}
 //	vec2 uv = (fragCoord*2.-iResolution.xy)/iResolution.y;
 	vec2 uv = (UV - vec2(0.5,0.5))* 4.0;
     vec4 color = vec4(.0,.0,.0, 0);
     uv = normalize(uv) * length(uv);
-    for(int i=0;i<12;i++){
-        float t = TIME + float(i)*3.141592/12.*(5.+1.*stepping(sin(TIME*3.)));
-        vec2 p = vec2(cos(t),sin(t));
-        p *= cos(TIME + float(i)*3.141592*cos(TIME/8.));
-        vec3 col = cos(vec3(0,1,-1)*3.141592*2./3.+3.141925*(TIME/2.+float(i)/5.)) * 0.5 + 0.5;
-        color += vec4(0.05/length(uv-p*0.9)*col,1.0);
+    for(int i=0; i<numberPoint; i++){
+        float t = TIME + float(i) * 3.141592/float(numberPoint) * (5.+1.* SteppingFactor * stepping(sin(TIME*3.)));
+        vec2 p = vec2(cos(t), sin(t));
+		float gather = reduce(cos(TIME + float(i)*3.141592*cos(TIME/8.)), gatherMin, gatherMax, -1, 1);
+        p *= gather;
+
+        vec3 col = cos(vec3(0,1,-1)*3.141592*2./3. + 3.141925*(TIME/2. + float(i)/5.)) * 0.5 + 0.5;
+		col = mix(col , centerColor, 1. - abs(gather));
+//		if(gather < 0.01 && gather > -0.01){
+//			col = CenterColor;
+//		}
+			
+        color += vec4((LightSpotRadius + abs(cos(TIME/2.)) * 0.001)/length(uv-p * Radius)*col,1.0);
     }
-    color.xyz = pow(color.xyz,vec3(3.));
+    color.xyz = pow(color.xyz,vec3(Floodlight));
     color.w = 1.0;
 	ALBEDO = color.rgb;
 	ALPHA = color.a;
@@ -37,13 +70,192 @@ void fragment()
 resource_local_to_scene = true
 render_priority = 1
 shader = SubResource( 6 )
+shader_param/GatherMax = 1.0
+shader_param/GatherMin = -1.0
+shader_param/Radius = 1.0
+shader_param/Symmetrical = false
+shader_param/CenterColor = Vector3( 1, 0, 0 )
+shader_param/numberPoint = 10
+shader_param/Floodlight = 5.0
+shader_param/LightSpotRadius = 0.02
+shader_param/SteppingFactor = 0.0
 
 [sub_resource type="QuadMesh" id=5]
 size = Vector2( 4, 4 )
 
+[sub_resource type="Animation" id=8]
+resource_name = "Gather"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:material_override:shader_param/GatherMax")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.02 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:material_override:shader_param/GatherMin")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.6, 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:material_override:shader_param/SteppingFactor")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.4, 0.0 ]
+}
+
+[sub_resource type="Animation" id=9]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:material_override:shader_param/GatherMax")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:material_override:shader_param/GatherMin")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ -1.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:material_override:shader_param/LightSpotRadius")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.02 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath(".:material_override:shader_param/SteppingFactor")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath(".:material_override:shader_param/Radius")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath(".:material_override:shader_param/Symmetrical")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath(".:material_override:shader_param/CenterColor")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 1, 0, 0 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath(".:material_override:shader_param/Floodlight")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 5.0 ]
+}
+
 [node name="Spatial" type="Spatial"]
 
 [node name="Hole" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.559564, 0, 0 )
 material_override = SubResource( 7 )
 cast_shadow = 0
 mesh = SubResource( 5 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Hole"]
+anims/Gather = SubResource( 8 )
+anims/RESET = SubResource( 9 )
+
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+margin_right = 322.0
+margin_bottom = 522.0
+custom_constants/separation = 10
+
+[node name="Expand" type="Button" parent="Control/VBoxContainer"]
+margin_right = 322.0
+margin_bottom = 256.0
+size_flags_vertical = 3
+text = "Expand"
+
+[node name="Gather" type="Button" parent="Control/VBoxContainer"]
+margin_top = 266.0
+margin_right = 322.0
+margin_bottom = 522.0
+size_flags_vertical = 3
+text = "Gather"
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.49177 )

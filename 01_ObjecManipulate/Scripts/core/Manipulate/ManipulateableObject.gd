@@ -11,7 +11,6 @@ var delayInit = true   #Reduce initialization burden
 var projectionPlaneMaxSize = 150 setget SetProjectionPlaneMaxSize 
 var RotationByTouchDistanceSpeed = 0.009
 var scaleSpeed = 0.00005 
-var debugMode = true
 #endregion
 
 onready var editorRoot =  get_tree().get_root().find_node("EditorRoot", true, false)
