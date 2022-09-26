@@ -1,6 +1,6 @@
 extends Spatial
 
-
+onready var editorRoot =  get_tree().get_root().find_node("EditorRoot", true, false)
 
 var manipulateSessionConfig = {
 	"ground":{
@@ -36,36 +36,47 @@ func PressEventProcess(inputPos):
 		#Step 1: try get if it is IntersectionObj
 		var intersectionObjRoot = TryGetIntersectionObjRoot(intersection.collider)
 		if(intersectionObjRoot != null):
-			if(currentManipulateObj != null and currentManipulateObj != intersectionObjRoot):
-				currentManipulateObj.OnManipulateEnd()
-			else:
-				HandleManipulationStarted()
-			currentManipulateObj = intersectionObjRoot
-			intersectionObjRoot.OnManipulateStart()
-			return
+			var manipulateObjRoot = Spatial.new()
+			manipulateObjRoot.set_script(editorRoot.ManipulateableObjectScript)
+			intersectionObjRoot.get_parent().add_child(manipulateObjRoot)
+			manipulateObjRoot.transform = intersectionObjRoot.transform 
+			intersectionObjRoot.get_parent().remove_child(intersectionObjRoot)
+			manipulateObjRoot.add_child(intersectionObjRoot)
+			intersectionObjRoot.transform.origin = Vector3(0, 0, 0)
+			intersectionObjRoot.transform.basis = Basis.IDENTITY
 			
+			if(currentManipulateObj != intersectionObjRoot):
+				EndManipulation()
+
+			currentManipulateObj = manipulateObjRoot
+			currentManipulateObj.OnManipulateStart()
+			return
+
 		#Step 2: try get if it is IntersectionHandle
 		var intersectionHandleRoot = TryGetIntersectionHandleRoot(intersection.collider)
 		if(intersectionHandleRoot != null):
 			currentManipulateObj.OnManipulateHandlePressedCallback(intersectionHandleRoot.handleInfo)
 			return
-			
+
 		#Step 3: EndManipulation
-		currentManipulateObj.OnManipulateEnd()
-		HandleManipulationEnded()
-		intersectionObjRoot == null
+		EndManipulation()
+
+
 func OtherEventProcess(event):
 	if(currentManipulateObj != null):
 		currentManipulateObj.InputHandle(event)
 
-func HandleManipulationStarted():
-	print("HandleManipulationStarted")
-	pass
-	
-func HandleManipulationEnded():
-	print("HandleManipulationEnded")
-	pass
-	
+
+func EndManipulation():
+	if(currentManipulateObj!=null):
+		currentManipulateObj.OnManipulateEnd()
+		var objNode = currentManipulateObj.get_child(0)
+		currentManipulateObj.remove_child(objNode)
+		currentManipulateObj.get_parent().add_child(objNode)
+		objNode.transform = currentManipulateObj.transform
+		currentManipulateObj.queue_free()
+		currentManipulateObj = null
+
 func TryGetIntersectionObjRoot(collider):
 	if(collider.get_parent().has_meta("ManipulateableObject")):
 		return collider.get_parent()

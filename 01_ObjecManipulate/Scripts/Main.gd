@@ -4,7 +4,7 @@ const PIE = 3.1415926
 const HALF_PIE = 1.5707963
 var toolScript = load("res://01_ObjecManipulate/Scripts/utils/editorTool.gd")
 var handleScript = load("res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateHandle.gd")
-
+var ManipulateableObjectScript = load("res://01_ObjecManipulate/Scripts/core/Manipulate/ManipulateableObject.gd")
 var edgePrefab = load("res://01_ObjecManipulate/prefabs/edge.tscn")
 var eadgTrans = [                                         #     normal           
 	Vector3(1, 1, 0),   Quat(Vector3(1, 0, 0), HALF_PIE),  Vector3(0, 0, 1), 
