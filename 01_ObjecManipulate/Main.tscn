@@ -38,7 +38,6 @@ __meta__ = {
 }
 
 [node name="Objects" type="Spatial" parent="."]
-script = ExtResource( 3 )
 
 [node name="Obj0" type="Spatial" parent="Objects"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5518, 0 )
@@ -67,3 +66,6 @@ script = ExtResource( 4 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 4 )
+
+[node name="ManipulateSession" type="Spatial" parent="."]
+script = ExtResource( 3 )
