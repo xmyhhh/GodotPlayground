@@ -1,0 +1,21 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "shader_type canvas_item;
+uniform vec4 outerColor = vec4(1,1,1,1);
+uniform vec4 innerColor = vec4(0,0,0,1);
+uniform float borderWidthTmin = 0.3;
+uniform float borderWidthTmax = 0.4;
+
+void fragment(){
+	COLOR = vec4(0,0,0,0);
+	vec2 uv = UV - vec2(0.5 , 0.5);
+	float uv_len = length(uv);
+	if(uv_len > borderWidthTmin && uv_len < borderWidthTmax){
+		COLOR = outerColor;
+	}
+	else if(uv_len < borderWidthTmin){
+		COLOR = innerColor;
+	}
+
+}"
