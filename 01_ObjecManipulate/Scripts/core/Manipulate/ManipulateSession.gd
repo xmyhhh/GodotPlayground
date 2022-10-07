@@ -38,6 +38,7 @@ func PressEventProcess(inputPos):
 		if(intersectionObjRoot != null):
 			var manipulateObjRoot = Spatial.new()
 			manipulateObjRoot.set_script(editorRoot.ManipulateableObjectScript)
+			manipulateObjRoot.manipulateSessionNode = self
 			intersectionObjRoot.get_parent().add_child(manipulateObjRoot)
 			manipulateObjRoot.transform = intersectionObjRoot.transform 
 			intersectionObjRoot.get_parent().remove_child(intersectionObjRoot)
@@ -83,6 +84,7 @@ func TryGetIntersectionObjRoot(collider):
 	if(collider.get_parent().get_parent().has_meta("ManipulateableObject")):
 		return collider.get_parent().get_parent()
 	return null
+	
 func TryGetIntersectionHandleRoot(collider):
 	if(collider.get_parent().has_meta("ManipulateableHandle")):
 		return collider.get_parent()

@@ -36,6 +36,7 @@ var meshNode = null
 var physicsBodyNode = null
 var collisonNodeArray = null
 var manipulateSessionRoot = null
+var manipulateSessionNode = null
 var manipulate3DGUIRootNode = null
 var boundingBoxRoot = null
 
@@ -240,7 +241,7 @@ func PositionHandleProcess(event):
 		var currentCamera = get_viewport().get_camera()
 		var spaceSatae = get_world().direct_space_state
 		var rayOrigin = currentCamera.project_ray_origin(event.position)
-		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * get_parent().manipulateSessionConfig["manipulateMaxDistance"]
+		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * manipulateSessionNode.manipulateSessionConfig["manipulateMaxDistance"]
 		var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFE, false, true)
 		if not intersection.empty()	:
 			#try get if it is ProjectionPlane
@@ -287,7 +288,7 @@ func RotationHandleProcessByProjectionPlane(event):
 		var currentCamera = get_viewport().get_camera()
 		var spaceSatae = get_world().direct_space_state
 		var rayOrigin = currentCamera.project_ray_origin(event.position)
-		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * get_parent().manipulateSessionConfig["manipulateMaxDistance"]
+		var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * manipulateSessionNode.manipulateSessionConfig["manipulateMaxDistance"]
 		var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0x7FFFFFFE, false, true)
 		if not intersection.empty()	:
 			#try get if it is ProjectionPlane
