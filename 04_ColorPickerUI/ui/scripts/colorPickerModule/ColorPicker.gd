@@ -10,6 +10,7 @@ onready var previewNode = $"CenterContainer/VBoxContainer/Hex/VBoxContainer/HBox
 onready var textEditNode = $"CenterContainer/VBoxContainer/Hex/VBoxContainer/HBoxContainer/CenterContainer/TextEdit"
 onready var confirmButton = $"CenterContainer/VBoxContainer/ConfirmButton/TextureRect"
 
+
 var hue = 0
 var saturation = 0
 var ligintness = 1
@@ -18,6 +19,7 @@ var alpha = 1
 var finalColor = Color(1,1,1,1)
 
 func _ready():
+
 	hScrollNode.connect("TargetButtonMove", self, "HScrollMoveCallback")
 	svPickerNode.connect("TargetButtonMove", self, "SVPickerMoveCallback")
 	alphaScrollNode.connect("TargetButtonMove", self, "AlphaScrollMoveCallback")
@@ -39,7 +41,6 @@ func SVPickerMoveCallback(value):
 
 func ConfirmButtonPressedCallback():
 	emit_signal("ColorConfirm", finalColor)
-
 
 func UpdateShaderAndText():
 
@@ -71,6 +72,5 @@ func UpdateShaderAndText():
 	
 	#Step 4: emit signal
 	emit_signal("ColorChange", color)
-
 
 
