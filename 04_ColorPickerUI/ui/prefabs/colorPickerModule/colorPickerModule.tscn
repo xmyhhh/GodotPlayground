@@ -1,0 +1,212 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://04_ColorPickerUI/ui/shader/colorPickerModule/grayPicker.tres" type="Shader" id=1]
+[ext_resource path="res://04_ColorPickerUI/ui/shader/colorPickerModule/colorPickerRGBScrollButton.tres" type="Shader" id=2]
+[ext_resource path="res://04_ColorPickerUI/ui/scripts/colorPickerModule/ColorPicker.gd" type="Script" id=3]
+[ext_resource path="res://04_ColorPickerUI/ui/pics/colorPickerModule/background.svg" type="Texture" id=4]
+[ext_resource path="res://04_ColorPickerUI/ui/pics/colorPickerModule/RGBBarBackground.png" type="Texture" id=5]
+[ext_resource path="res://04_ColorPickerUI/ui/pics/colorPickerModule/buttonBackground.svg" type="Texture" id=6]
+[ext_resource path="res://04_ColorPickerUI/ui/scripts/colorPickerModule/common/custom1DMove.gd" type="Script" id=7]
+[ext_resource path="res://font/dynamicFont/title/titleT2.tres" type="DynamicFont" id=8]
+[ext_resource path="res://04_ColorPickerUI/ui/scripts/colorPickerModule/common/custom2DMove.gd" type="Script" id=9]
+
+[sub_resource type="ShaderMaterial" id=9]
+shader = ExtResource( 1 )
+shader_param/hue = 0.0
+
+[sub_resource type="ShaderMaterial" id=10]
+shader = ExtResource( 2 )
+shader_param/outerColor = Plane( 1, 1, 1, 1 )
+shader_param/innerColor = Plane( 0, 0, 0, 1 )
+shader_param/borderWidthTmin = 0.3
+shader_param/borderWidthTmax = 0.4
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = ExtResource( 2 )
+shader_param/outerColor = Plane( 1, 1, 1, 1 )
+shader_param/innerColor = Plane( 0, 0, 0, 1 )
+shader_param/borderWidthTmin = 0.3
+shader_param/borderWidthTmax = 0.4
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = ExtResource( 2 )
+shader_param/outerColor = Plane( 1, 1, 1, 1 )
+shader_param/innerColor = Plane( 0, 0, 0, 1 )
+shader_param/borderWidthTmin = 0.47
+shader_param/borderWidthTmax = 0.5
+
+[node name="ColorPickerModule" type="TextureRect"]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -733.0
+mouse_filter = 0
+texture = ExtResource( 4 )
+script = ExtResource( 3 )
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+margin_left = 145.0
+margin_right = 588.0
+margin_bottom = 1080.0
+rect_min_size = Vector2( 443, 1080 )
+mouse_filter = 2
+
+[node name="Title" type="MarginContainer" parent="CenterContainer/VBoxContainer"]
+margin_right = 443.0
+margin_bottom = 71.0
+mouse_filter = 2
+custom_constants/margin_top = 24
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer/Title"]
+margin_top = 24.0
+margin_right = 443.0
+margin_bottom = 71.0
+custom_fonts/font = ExtResource( 8 )
+text = "颜色"
+
+[node name="GrayPicker" type="MarginContainer" parent="CenterContainer/VBoxContainer"]
+margin_top = 75.0
+margin_right = 443.0
+margin_bottom = 542.0
+mouse_filter = 2
+custom_constants/margin_top = 24
+
+[node name="ColorRect" type="ColorRect" parent="CenterContainer/VBoxContainer/GrayPicker"]
+material = SubResource( 9 )
+margin_top = 24.0
+margin_right = 443.0
+margin_bottom = 467.0
+rect_min_size = Vector2( 443, 443 )
+mouse_filter = 1
+script = ExtResource( 9 )
+
+[node name="ColorButton" type="ColorRect" parent="CenterContainer/VBoxContainer/GrayPicker/ColorRect"]
+material = SubResource( 10 )
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+
+[node name="HUVScroll" type="MarginContainer" parent="CenterContainer/VBoxContainer"]
+margin_top = 546.0
+margin_right = 443.0
+margin_bottom = 620.0
+mouse_filter = 2
+custom_constants/margin_top = 50
+
+[node name="TextureProgress" type="TextureRect" parent="CenterContainer/VBoxContainer/HUVScroll"]
+margin_top = 50.0
+margin_right = 443.0
+margin_bottom = 74.0
+rect_min_size = Vector2( 443, 24 )
+mouse_filter = 0
+texture = ExtResource( 5 )
+script = ExtResource( 7 )
+
+[node name="ColorButton" type="ColorRect" parent="CenterContainer/VBoxContainer/HUVScroll/TextureProgress"]
+material = SubResource( 7 )
+margin_top = -6.0
+margin_right = 17.28
+margin_bottom = 17.0
+rect_min_size = Vector2( 35, 35 )
+mouse_filter = 1
+
+[node name="AlphaScroll" type="MarginContainer" parent="CenterContainer/VBoxContainer"]
+margin_top = 624.0
+margin_right = 443.0
+margin_bottom = 698.0
+mouse_filter = 2
+custom_constants/margin_top = 50
+
+[node name="TextureProgress" type="TextureRect" parent="CenterContainer/VBoxContainer/AlphaScroll"]
+margin_top = 50.0
+margin_right = 443.0
+margin_bottom = 74.0
+rect_min_size = Vector2( 443, 24 )
+mouse_filter = 0
+texture = ExtResource( 5 )
+script = ExtResource( 7 )
+
+[node name="ColorButton" type="ColorRect" parent="CenterContainer/VBoxContainer/AlphaScroll/TextureProgress"]
+material = SubResource( 7 )
+margin_top = -6.0
+margin_right = 35.0
+margin_bottom = 29.0
+rect_min_size = Vector2( 35, 35 )
+mouse_filter = 1
+
+[node name="Hex" type="MarginContainer" parent="CenterContainer/VBoxContainer"]
+margin_top = 702.0
+margin_right = 443.0
+margin_bottom = 844.0
+mouse_filter = 2
+custom_constants/margin_top = 50
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/Hex"]
+margin_top = 50.0
+margin_right = 443.0
+margin_bottom = 142.0
+rect_min_size = Vector2( 0, 92 )
+mouse_filter = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/VBoxContainer/Hex/HBoxContainer"]
+margin_right = 122.0
+margin_bottom = 92.0
+mouse_filter = 2
+size_flags_vertical = 3
+custom_constants/margin_right = 30
+
+[node name="ColorRect" type="ColorRect" parent="CenterContainer/VBoxContainer/Hex/HBoxContainer/MarginContainer"]
+material = SubResource( 6 )
+margin_right = 92.0
+margin_bottom = 92.0
+rect_min_size = Vector2( 92, 92 )
+mouse_filter = 2
+size_flags_horizontal = 9
+
+[node name="TextEdit" type="TextEdit" parent="CenterContainer/VBoxContainer/Hex/HBoxContainer"]
+margin_left = 126.0
+margin_right = 443.0
+margin_bottom = 92.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "# FF2D55"
+context_menu_enabled = false
+shortcut_keys_enabled = false
+drag_and_drop_selection_enabled = false
+
+[node name="ColorRect" type="ColorRect" parent="CenterContainer/VBoxContainer/Hex/HBoxContainer/TextEdit"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -2.0
+rect_min_size = Vector2( 0, 2 )
+mouse_filter = 2
+
+[node name="ConfirmButton" type="MarginContainer" parent="CenterContainer/VBoxContainer"]
+margin_top = 848.0
+margin_right = 443.0
+margin_bottom = 1024.0
+mouse_filter = 2
+custom_constants/margin_top = 82
+
+[node name="TextureRect" type="TextureRect" parent="CenterContainer/VBoxContainer/ConfirmButton"]
+margin_top = 82.0
+margin_right = 443.0
+margin_bottom = 176.0
+mouse_filter = 2
+texture = ExtResource( 6 )
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer/ConfirmButton/TextureRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 8 )
+text = "确定"
+align = 1
+valign = 1
