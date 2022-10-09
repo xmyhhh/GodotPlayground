@@ -1,48 +1,51 @@
 extends Control
 
-signal ScrollButtonMove
+signal TargetButtonMove
 
-var scrollButtonNode 
-var isPressingScrollButton = false
+export var targetButton:NodePath
+var targetButtonNode 
+var isPressingtargetButton = false
 
-var scrollButtonXMin
-var scrollButtonXMax 
+var targetButtonXMin
+var targetButtonXMax 
 
 var startDragPos
 var startButtonPos
 func _ready():
-	scrollButtonNode = get_child(0)
-	scrollButtonNode.rect_position.x -= scrollButtonNode.rect_size.x / 2
-	scrollButtonXMin = rect_position.x - scrollButtonNode.rect_size.x / 2
-	scrollButtonXMax = rect_position.x + margin_right 
+	targetButtonNode = get_node(targetButton)
+	if(targetButtonNode == null):
+		targetButtonNode = get_child(0)
+	targetButtonNode.rect_position.x -= targetButtonNode.rect_size.x / 2
+	targetButtonXMin = rect_position.x - targetButtonNode.rect_size.x / 2
+	targetButtonXMax = rect_position.x + margin_right 
 
 func _gui_input(event):
 	if event is InputEventScreenTouch or event is InputEventMouseButton:
 		if ((event.is_pressed())):
-			isPressingScrollButton = true
-			scrollButtonNode.rect_global_position.x = event.global_position.x - scrollButtonNode.rect_size.x / 2
+			isPressingtargetButton = true
+			targetButtonNode.rect_global_position.x = event.global_position.x - targetButtonNode.rect_size.x / 2
 			startDragPos = event.global_position.x
-			startButtonPos = scrollButtonNode.rect_position.x
+			startButtonPos = targetButtonNode.rect_position.x
 			
 		if ((not event.is_pressed())):
-			isPressingScrollButton = false
+			isPressingtargetButton = false
 
 			
-	if (event is InputEventScreenDrag or event is InputEventMouseMotion) and isPressingScrollButton:
-		print("(event.global_position.x - startDragPos)", event.global_position.x ," ", startDragPos)
-		if(event.position.x > scrollButtonXMax or event.position.x < scrollButtonXMin):
-			print("over"," ",event.position.x," ",scrollButtonXMin," ", scrollButtonXMax)
+	if (event is InputEventScreenDrag or event is InputEventMouseMotion) and isPressingtargetButton:
+		
+		if(event.position.x > targetButtonXMax or event.position.x < targetButtonXMin):
+			print("over"," ",event.position.x," ",targetButtonXMin," ", targetButtonXMax)
 			return
 		
-		scrollButtonNode.rect_position.x = startButtonPos + (event.global_position.x - startDragPos)
-		if(scrollButtonNode.rect_position.x > scrollButtonXMax):
-			scrollButtonNode.rect_position.x = scrollButtonXMax
+		targetButtonNode.rect_position.x = startButtonPos + (event.global_position.x - startDragPos)
+		if(targetButtonNode.rect_position.x > targetButtonXMax):
+			targetButtonNode.rect_position.x = targetButtonXMax
 			
-		elif(scrollButtonNode.rect_position.x < scrollButtonXMin):
-			scrollButtonNode.rect_position.x = scrollButtonXMin
+		elif(targetButtonNode.rect_position.x < targetButtonXMin):
+			targetButtonNode.rect_position.x = targetButtonXMin
 			
-		var scale = (scrollButtonNode.rect_position.x - scrollButtonXMin) / (scrollButtonXMax - scrollButtonXMin)
-		emit_signal("ScrollButtonMove", scale)
+		var scale = (targetButtonNode.rect_position.x - targetButtonXMin) / (targetButtonXMax - targetButtonXMin)
+		emit_signal("TargetButtonMove", scale)
 		
 
 

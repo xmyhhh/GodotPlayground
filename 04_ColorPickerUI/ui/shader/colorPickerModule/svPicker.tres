@@ -15,7 +15,7 @@ void fragment() {
 //	vec3 c = texture(SCREEN_TEXTURE,SCREEN_UV,0.0).rgb;	
 //	ivec2 size = textureSize(SCREEN_TEXTURE,0);
 
-	float gamut = 1.0 - (UV.x) / 2.0;   //range of luminance values to express approaches 0 as saturation reaches 1
+//	float gamut = 1.0 - (UV.x) / 2.0;   //range of luminance values to express approaches 0 as saturation reaches 1
 //	vec3 rgb = hsv2rgb(vec3(hue, SCREEN_UV.x,  1.0 - mix(0.0, gamut, SCREEN_UV.y) - (1.0-gamut)  ));
 	vec3 rgb = hsv2rgb(vec3(hue, UV.x, 1.0-UV.y));
 	COLOR.rgb = rgb;

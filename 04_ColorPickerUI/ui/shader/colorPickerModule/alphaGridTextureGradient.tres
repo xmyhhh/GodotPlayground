@@ -1,0 +1,27 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "shader_type canvas_item;
+
+uniform vec4 c1 = vec4(1,1,1,1);
+uniform vec4 c2 = vec4(0.7,0.7,0.7,1);
+uniform float gridSize = 12.;
+uniform float width = 1;
+uniform float height = 1;
+uniform vec4 targetColor = vec4(1,1,1,1);
+
+void fragment(){
+	vec4 inputColor = texture(TEXTURE, UV);
+	vec2 pixel = UV * vec2(width, height);
+	bool isXOdd = (int(pixel.x / gridSize) % 2 == 1);
+	bool isYOdd = (int(pixel.y / gridSize) % 2 == 1);
+	if((isXOdd && !isYOdd) || (!isXOdd && isYOdd)){
+		COLOR = mix(c1,targetColor,1. - UV.x);
+	}
+	else{
+		COLOR = mix(c2,targetColor,1. - UV.x);
+	}
+	COLOR.a = inputColor.a;
+}
+
+"

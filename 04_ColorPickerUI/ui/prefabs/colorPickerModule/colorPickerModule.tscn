@@ -1,6 +1,6 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=17 format=2]
 
-[ext_resource path="res://04_ColorPickerUI/ui/shader/colorPickerModule/grayPicker.tres" type="Shader" id=1]
+[ext_resource path="res://04_ColorPickerUI/ui/shader/colorPickerModule/svPicker.tres" type="Shader" id=1]
 [ext_resource path="res://04_ColorPickerUI/ui/shader/colorPickerModule/colorPickerRGBScrollButton.tres" type="Shader" id=2]
 [ext_resource path="res://04_ColorPickerUI/ui/scripts/colorPickerModule/ColorPicker.gd" type="Script" id=3]
 [ext_resource path="res://04_ColorPickerUI/ui/pics/colorPickerModule/background.svg" type="Texture" id=4]
@@ -9,6 +9,7 @@
 [ext_resource path="res://04_ColorPickerUI/ui/scripts/colorPickerModule/common/custom1DMove.gd" type="Script" id=7]
 [ext_resource path="res://font/dynamicFont/title/titleT2.tres" type="DynamicFont" id=8]
 [ext_resource path="res://04_ColorPickerUI/ui/scripts/colorPickerModule/common/custom2DMove.gd" type="Script" id=9]
+[ext_resource path="res://04_ColorPickerUI/ui/shader/colorPickerModule/alphaGridTextureGradient.tres" type="Shader" id=10]
 
 [sub_resource type="ShaderMaterial" id=9]
 shader = ExtResource( 1 )
@@ -18,15 +19,49 @@ shader_param/hue = 0.0
 shader = ExtResource( 2 )
 shader_param/outerColor = Plane( 1, 1, 1, 1 )
 shader_param/innerColor = Plane( 0, 0, 0, 1 )
-shader_param/borderWidthTmin = 0.3
-shader_param/borderWidthTmax = 0.4
+shader_param/borderWidthTmin = 0.4
+shader_param/borderWidthTmax = 0.5
+shader_param/useAlpha = false
+shader_param/c1 = Plane( 1, 1, 1, 1 )
+shader_param/c2 = Plane( 0.7, 0.7, 0.7, 1 )
+shader_param/gridSize = 12.0
+shader_param/width = 1.0
+shader_param/height = 1.0
 
 [sub_resource type="ShaderMaterial" id=7]
 shader = ExtResource( 2 )
 shader_param/outerColor = Plane( 1, 1, 1, 1 )
 shader_param/innerColor = Plane( 0, 0, 0, 1 )
-shader_param/borderWidthTmin = 0.3
-shader_param/borderWidthTmax = 0.4
+shader_param/borderWidthTmin = 0.4
+shader_param/borderWidthTmax = 0.5
+shader_param/useAlpha = false
+shader_param/c1 = Plane( 1, 1, 1, 1 )
+shader_param/c2 = Plane( 0.7, 0.7, 0.7, 1 )
+shader_param/gridSize = 12.0
+shader_param/width = 1.0
+shader_param/height = 1.0
+
+[sub_resource type="ShaderMaterial" id=12]
+shader = ExtResource( 10 )
+shader_param/c1 = Plane( 1, 1, 1, 1 )
+shader_param/c2 = Plane( 0.7, 0.7, 0.7, 1 )
+shader_param/gridSize = 12.0
+shader_param/width = 443.0
+shader_param/height = 24.0
+shader_param/targetColor = Plane( 1, 1, 1, 1 )
+
+[sub_resource type="ShaderMaterial" id=11]
+shader = ExtResource( 2 )
+shader_param/outerColor = Plane( 1, 1, 1, 1 )
+shader_param/innerColor = Plane( 0, 0, 0, 1 )
+shader_param/borderWidthTmin = 0.4
+shader_param/borderWidthTmax = 0.5
+shader_param/useAlpha = true
+shader_param/c1 = Plane( 1, 1, 1, 1 )
+shader_param/c2 = Plane( 0.7, 0.7, 0.7, 1 )
+shader_param/gridSize = 12.0
+shader_param/width = 35.0
+shader_param/height = 35.0
 
 [sub_resource type="ShaderMaterial" id=6]
 shader = ExtResource( 2 )
@@ -34,6 +69,12 @@ shader_param/outerColor = Plane( 1, 1, 1, 1 )
 shader_param/innerColor = Plane( 0, 0, 0, 1 )
 shader_param/borderWidthTmin = 0.47
 shader_param/borderWidthTmax = 0.5
+shader_param/useAlpha = true
+shader_param/c1 = Plane( 1, 1, 1, 1 )
+shader_param/c2 = Plane( 0.7, 0.7, 0.7, 1 )
+shader_param/gridSize = 12.0
+shader_param/width = 92.0
+shader_param/height = 92.0
 
 [node name="ColorPickerModule" type="TextureRect"]
 anchor_left = 1.0
@@ -69,14 +110,14 @@ margin_bottom = 71.0
 custom_fonts/font = ExtResource( 8 )
 text = "颜色"
 
-[node name="GrayPicker" type="MarginContainer" parent="CenterContainer/VBoxContainer"]
+[node name="SVPicker" type="MarginContainer" parent="CenterContainer/VBoxContainer"]
 margin_top = 75.0
 margin_right = 443.0
 margin_bottom = 542.0
 mouse_filter = 2
 custom_constants/margin_top = 24
 
-[node name="ColorRect" type="ColorRect" parent="CenterContainer/VBoxContainer/GrayPicker"]
+[node name="ColorRect" type="ColorRect" parent="CenterContainer/VBoxContainer/SVPicker"]
 material = SubResource( 9 )
 margin_top = 24.0
 margin_right = 443.0
@@ -85,20 +126,20 @@ rect_min_size = Vector2( 443, 443 )
 mouse_filter = 1
 script = ExtResource( 9 )
 
-[node name="ColorButton" type="ColorRect" parent="CenterContainer/VBoxContainer/GrayPicker/ColorRect"]
+[node name="ColorButton" type="ColorRect" parent="CenterContainer/VBoxContainer/SVPicker/ColorRect"]
 material = SubResource( 10 )
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 
-[node name="HUVScroll" type="MarginContainer" parent="CenterContainer/VBoxContainer"]
+[node name="HScroll" type="MarginContainer" parent="CenterContainer/VBoxContainer"]
 margin_top = 546.0
 margin_right = 443.0
 margin_bottom = 620.0
 mouse_filter = 2
 custom_constants/margin_top = 50
 
-[node name="TextureProgress" type="TextureRect" parent="CenterContainer/VBoxContainer/HUVScroll"]
+[node name="TextureProgress" type="TextureRect" parent="CenterContainer/VBoxContainer/HScroll"]
 margin_top = 50.0
 margin_right = 443.0
 margin_bottom = 74.0
@@ -107,7 +148,7 @@ mouse_filter = 0
 texture = ExtResource( 5 )
 script = ExtResource( 7 )
 
-[node name="ColorButton" type="ColorRect" parent="CenterContainer/VBoxContainer/HUVScroll/TextureProgress"]
+[node name="ColorButton" type="ColorRect" parent="CenterContainer/VBoxContainer/HScroll/TextureProgress"]
 material = SubResource( 7 )
 margin_top = -6.0
 margin_right = 17.28
@@ -123,16 +164,16 @@ mouse_filter = 2
 custom_constants/margin_top = 50
 
 [node name="TextureProgress" type="TextureRect" parent="CenterContainer/VBoxContainer/AlphaScroll"]
+material = SubResource( 12 )
 margin_top = 50.0
 margin_right = 443.0
 margin_bottom = 74.0
 rect_min_size = Vector2( 443, 24 )
-mouse_filter = 0
 texture = ExtResource( 5 )
 script = ExtResource( 7 )
 
 [node name="ColorButton" type="ColorRect" parent="CenterContainer/VBoxContainer/AlphaScroll/TextureProgress"]
-material = SubResource( 7 )
+material = SubResource( 11 )
 margin_top = -6.0
 margin_right = 35.0
 margin_bottom = 29.0

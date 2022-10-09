@@ -1,60 +1,56 @@
 extends Control
 
-signal ColorButtonMove
+signal TargetButtonMove
 
-var colorButtonNode 
-var isPressingColorButton = false
+var targetButtonNode 
+var isPressingtargetButton = false
 
-var colorButtonMin
-var colorButtonMax 
+var targetButtonMin
+var targetButtonMax 
 
 var startDragPos
 var startButtonPos
 
 var pivotOffset
 func _ready():
-	colorButtonNode = get_child(0)
-	colorButtonNode.rect_position -= colorButtonNode.rect_size / 2
-	colorButtonMin =  Vector2(0,0)
-	colorButtonMax = Vector2(margin_right, margin_bottom - margin_top) 
-	pivotOffset = colorButtonNode.rect_size / 2
+	targetButtonNode = get_child(0)
+	targetButtonNode.rect_position -= targetButtonNode.rect_size / 2
+	targetButtonMin =  Vector2(0,0)
+	targetButtonMax = Vector2(margin_right, margin_bottom - margin_top) 
+	pivotOffset = targetButtonNode.rect_size / 2
+	
 func _gui_input(event):
 	if event is InputEventScreenTouch or event is InputEventMouseButton:
 		if ((event.is_pressed())):
-			isPressingColorButton = true
-			colorButtonNode.rect_global_position = event.global_position - pivotOffset
+			isPressingtargetButton = true
+			targetButtonNode.rect_global_position = event.global_position - pivotOffset
 			startDragPos = event.global_position
-			startButtonPos = colorButtonNode.rect_position
+			startButtonPos = targetButtonNode.rect_position
 			
 		if ((not event.is_pressed())):
-			isPressingColorButton = false
+			isPressingtargetButton = false
 
 			
-	if (event is InputEventScreenDrag or event is InputEventMouseMotion) and isPressingColorButton:
-#		print(""," ",event.position," ", colorButtonMax," ", colorButtonMin)
+	if (event is InputEventScreenDrag or event is InputEventMouseMotion) and isPressingtargetButton:
 
-#		if(Vec2Compare(event.position, colorButtonMax) or not Vec2Compare(event.position, colorButtonMin)):
-#			print("over")
-#			return
-		
-		colorButtonNode.rect_position = startButtonPos + (event.global_position - startDragPos) 
-		if(colorButtonNode.rect_position.x > (colorButtonMax.x - pivotOffset.x)):
-			colorButtonNode.rect_position.x = (colorButtonMax.x - pivotOffset.x)
+		targetButtonNode.rect_position = startButtonPos + (event.global_position - startDragPos) 
+		if(targetButtonNode.rect_position.x > (targetButtonMax.x - pivotOffset.x)):
+			targetButtonNode.rect_position.x = (targetButtonMax.x - pivotOffset.x)
 			
-		if(colorButtonNode.rect_position.x < (colorButtonMin.x - pivotOffset.x)):
-			colorButtonNode.rect_position.x = (colorButtonMin.x - pivotOffset.x)
+		if(targetButtonNode.rect_position.x < (targetButtonMin.x - pivotOffset.x)):
+			targetButtonNode.rect_position.x = (targetButtonMin.x - pivotOffset.x)
 			
-		if(colorButtonNode.rect_position.y > (colorButtonMax.y - pivotOffset.y)):
-			colorButtonNode.rect_position.y = (colorButtonMax.y - pivotOffset.y)
+		if(targetButtonNode.rect_position.y > (targetButtonMax.y - pivotOffset.y)):
+			targetButtonNode.rect_position.y = (targetButtonMax.y - pivotOffset.y)
 			
-		if(colorButtonNode.rect_position.y < (colorButtonMin.y- pivotOffset.y)):
-			colorButtonNode.rect_position.y = (colorButtonMin.y - pivotOffset.y)
+		if(targetButtonNode.rect_position.y < (targetButtonMin.y- pivotOffset.y)):
+			targetButtonNode.rect_position.y = (targetButtonMin.y - pivotOffset.y)
 			
 		var scale = Vector2(
-			(colorButtonNode.rect_position.x + pivotOffset.x - colorButtonMin.x) / (colorButtonMax.x - colorButtonMin.x),
-			(colorButtonNode.rect_position.y + pivotOffset.y - colorButtonMin.y) / (colorButtonMax.y - colorButtonMin.y)
+			(targetButtonNode.rect_position.x + pivotOffset.x - targetButtonMin.x) / (targetButtonMax.x - targetButtonMin.x),
+			(targetButtonNode.rect_position.y + pivotOffset.y - targetButtonMin.y) / (targetButtonMax.y - targetButtonMin.y)
 			)
-		emit_signal("ColorButtonMove", scale)
+		emit_signal("TargetButtonMove", scale)
 
 func Vec2Compare(v1, v2):
 	if(v1.x > v2.x and v1.y > v2.y):
