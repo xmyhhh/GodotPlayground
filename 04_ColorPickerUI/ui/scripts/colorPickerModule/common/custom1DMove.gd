@@ -11,19 +11,30 @@ var targetButtonXMax
 
 var startDragPos
 var startButtonPos
+
+var pivotOffset
+export var setToRight = true
+
 func _ready():
+
 	targetButtonNode = get_node(targetButton)
 	if(targetButtonNode == null):
 		targetButtonNode = get_child(0)
-	targetButtonNode.rect_position.x -= targetButtonNode.rect_size.x / 2
-	targetButtonXMin = rect_position.x - targetButtonNode.rect_size.x / 2
+	pivotOffset = targetButtonNode.rect_size.x / 2
+	targetButtonXMin = rect_position.x - pivotOffset
 	targetButtonXMax = rect_position.x + margin_right 
+	
+	if(not setToRight):
+		targetButtonNode.rect_position.x -= pivotOffset
+	else:
+		targetButtonNode.rect_position.x = targetButtonXMax - pivotOffset
+	
 
 func _gui_input(event):
 	if event is InputEventScreenTouch or event is InputEventMouseButton:
 		if ((event.is_pressed())):
 			isPressingtargetButton = true
-			targetButtonNode.rect_global_position.x = event.global_position.x - targetButtonNode.rect_size.x / 2
+			targetButtonNode.rect_global_position.x = event.global_position.x - pivotOffset
 			startDragPos = event.global_position.x
 			startButtonPos = targetButtonNode.rect_position.x
 			

@@ -16,10 +16,10 @@ void fragment(){
 	bool isXOdd = (int(pixel.x / gridSize) % 2 == 1);
 	bool isYOdd = (int(pixel.y / gridSize) % 2 == 1);
 	if((isXOdd && !isYOdd) || (!isXOdd && isYOdd)){
-		COLOR = mix(c1,targetColor,1. - UV.x);
+		COLOR = mix(c1,targetColor, UV.x);
 	}
 	else{
-		COLOR = mix(c2,targetColor,1. - UV.x);
+		COLOR = mix(c2,targetColor, UV.x);
 	}
 	COLOR.a = inputColor.a;
 }

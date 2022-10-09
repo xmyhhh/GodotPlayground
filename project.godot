@@ -8,16 +8,6 @@
 
 config_version=4
 
-_global_script_classes=[ {
-"base": "Control",
-"class": "TouchHide",
-"language": "GDScript",
-"path": "res://04_ColorPickerUI/ui/scripts/colorPickerModule/common/touchHide.gd"
-} ]
-_global_script_class_icons={
-"TouchHide": ""
-}
-
 [application]
 
 config/name="GodotPlayground"
