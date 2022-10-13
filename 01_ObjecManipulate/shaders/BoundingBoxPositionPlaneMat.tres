@@ -3,12 +3,52 @@
 [sub_resource type="Shader" id=5]
 code = "shader_type spatial;
 render_mode cull_disabled, unshaded;
+uniform float gridSize = 20.;
+uniform float border = 3;
+uniform vec4 c1 = vec4(1,1,1,0.3);
+uniform vec4 c2 = vec4(1,1,1,0);
+uniform float width = 100000.;
+uniform float height = 100000.;
+uniform float rmax = 0.01;
+uniform float rmin = 0.01;
 
 void fragment(){
+	vec2 pixel = UV * vec2(width, height);
+	float alphaFactor = 1.;
+	bool isXinBorder = (( mod((pixel.x), (gridSize + border))  ) <= border);
+	bool isYinBorder =  (( mod((pixel.y), (gridSize + border))  ) <= border);
+	float r = length(UV - vec2(0.5,  0.5));
+
+	if(r > rmin && r < rmax ){
+		alphaFactor = (rmax - r) / (rmax - rmin);
+
+	}
+	else if(r > rmax){
+		alphaFactor = 0.;
+	}
 	
-	ALBEDO = vec3(1, 0, 0.2);
-	ALPHA = 0.4;
-}"
+	if(isXinBorder && isYinBorder){
+		ALBEDO = c1.rgb;
+		ALPHA = c1.a * alphaFactor;
+	}
+	else if(!isXinBorder && !isYinBorder){
+		ALBEDO = c2.rgb;
+		ALPHA = c2.a * alphaFactor;
+	}
+	else{
+		ALBEDO = c1.rgb;
+		ALPHA = c1.a * alphaFactor;
+	}
+}
+"
 
 [resource]
 shader = SubResource( 5 )
+shader_param/gridSize = 20.0
+shader_param/border = 3.0
+shader_param/c1 = Plane( 1, 1, 1, 0.3 )
+shader_param/c2 = Plane( 1, 1, 1, 0 )
+shader_param/width = 100000.0
+shader_param/height = 100000.0
+shader_param/rmax = 0.01
+shader_param/rmin = 0.01

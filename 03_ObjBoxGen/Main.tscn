@@ -55,6 +55,12 @@ shape = SubResource( 5 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.94754, 0, 0 )
 shape = SubResource( 6 )
 
+[node name="CollisionPolygon" type="CollisionPolygon" parent="Obj0"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.46795, 0, 0 )
+depth = 1.777
+polygon = PoolVector2Array( -0.314445, 0.833067, 0.0617175, 0.92362, 0.475872, 0.811073, 0.760272, 0.518752, 0.870834, 0.110573, 0.774331, -0.293387, 0.415473, -0.639066, 0.0482516, -0.727785, -0.253137, -0.703619, -0.653715, -0.36841, -0.769068, 0.0683444, -0.631593, 0.514314 )
+margin = 0.001
+
 [node name="MeshRoot" type="Spatial" parent="Obj0"]
 
 [node name="CSGMesh0" type="CSGMesh" parent="Obj0/MeshRoot"]
@@ -72,5 +78,8 @@ mesh = SubResource( 9 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9457, 0, -0.0339372 )
 mesh = SubResource( 10 )
 
+[node name="CSGSphere" type="CSGSphere" parent="Obj0/MeshRoot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.42957, 0, 0 )
+
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 0.862522, -0.174429, 0.475005, 0, 0.93871, 0.344709, -0.506019, -0.297319, 0.809658, 3.52912, 3.34512, 4.51971 )
+transform = Transform( 0.943587, -0.114141, 0.31083, 0, 0.93871, 0.344709, -0.331124, -0.325263, 0.885754, 6.08793, 3.34512, 4.36543 )

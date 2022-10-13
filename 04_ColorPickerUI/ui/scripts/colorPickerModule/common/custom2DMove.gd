@@ -21,19 +21,24 @@ func _ready():
 	
 func _gui_input(event):
 	if event is InputEventScreenTouch or event is InputEventMouseButton:
-		if ((event.is_pressed())):
+		if event.is_pressed():
 			isPressingtargetButton = true
-			targetButtonNode.rect_global_position = event.global_position - pivotOffset
-			startDragPos = event.global_position
+			targetButtonNode.rect_position = event.position - pivotOffset
+			startDragPos = event.position
 			startButtonPos = targetButtonNode.rect_position
 			
-		if ((not event.is_pressed())):
+		if not event.is_pressed():
 			isPressingtargetButton = false
-
 			
+		var scale = Vector2(
+			(targetButtonNode.rect_position.x + pivotOffset.x - targetButtonMin.x) / (targetButtonMax.x - targetButtonMin.x),
+			(targetButtonNode.rect_position.y + pivotOffset.y - targetButtonMin.y) / (targetButtonMax.y - targetButtonMin.y)
+			)
+		emit_signal("TargetButtonMove", scale)
+		
 	if (event is InputEventScreenDrag or event is InputEventMouseMotion) and isPressingtargetButton:
 
-		targetButtonNode.rect_position = startButtonPos + (event.global_position - startDragPos) 
+		targetButtonNode.rect_position = startButtonPos + (event.position - startDragPos) 
 		if(targetButtonNode.rect_position.x > (targetButtonMax.x - pivotOffset.x)):
 			targetButtonNode.rect_position.x = (targetButtonMax.x - pivotOffset.x)
 			

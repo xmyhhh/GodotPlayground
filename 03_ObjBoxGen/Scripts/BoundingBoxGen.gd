@@ -13,10 +13,11 @@ func _ready():
 
 
 func CollisionShapesToBox(targetNode):
-	var CollisionShapeArray = editorRoot.toolScript.FindMultiNodeByType(targetNode, "CollisionShape")
+	var collisionShapeArray = editorRoot.toolScript.FindMultiNodeByType(targetNode, "CollisionShape")
+	var collisionPolygonArray =  editorRoot.toolScript.FindMultiNodeByType(targetNode, "CollisionPolygon")
 	var minVec3 = null
 	var maxVec3 = null
-	for collisionShape in CollisionShapeArray:
+	for collisionShape in collisionShapeArray:
 		match ShapeTypeToNumber(collisionShape.shape):
 			1: #CylinderShape
 				var res = GetCylinderShapeBoxSize(collisionShape)
@@ -34,6 +35,18 @@ func CollisionShapesToBox(targetNode):
 				var res = GetSphereShapeBoxSize(collisionShape)
 				minVec3 = Vec3Min(minVec3, res[0])
 				maxVec3 = Vec3Max(maxVec3, res[1])
+				
+	for collisionPolygon in collisionPolygonArray:
+		var itemTransaltion = collisionPolygon.transform.origin
+		for vec2 in collisionPolygon.polygon:
+			var p1 = itemTransaltion + Vector3(vec2.x, vec2.y, collisionPolygon.depth) 
+			var p2 = itemTransaltion + Vector3(vec2.x, vec2.y, -collisionPolygon.depth)
+			minVec3 = Vec3Min(minVec3, p1)
+			minVec3 = Vec3Min(minVec3, p2)
+			maxVec3 = Vec3Max(maxVec3, p1)
+			maxVec3 = Vec3Max(maxVec3, p2)
+			
+			
 	return [(maxVec3 + minVec3) / 2, (maxVec3 - minVec3) / 2]
 	
 

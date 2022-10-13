@@ -8,7 +8,7 @@ enum ManipulateActionConstraintType {Free, ByGrid}
 enum RotateFuncHandleType{ByProjectionPlane, ByDistance}
 #region Configurable Variable
 var delayInit = true   #Reduce initialization burden
-var projectionPlaneMaxSize = 150 setget SetProjectionPlaneMaxSize 
+var projectionPlaneMaxSize = 1000 
 var RotationByTouchDistanceSpeed = 0.009
 var scaleSpeed = 0.00005 
 #endregion
