@@ -21,12 +21,35 @@ func ray_cast(event):
 	var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * 100
 	var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0xFFFFFFFF, false, true)
 	if not intersection.empty()	:
-		print(intersection.position)
-		print(intersection.normal)
-
-
+	
+		var normal = VecApproximateZero(intersection.normal)
+		var center = intersection.position - normal/2
+		print(normal)
+		print(VecRound(center))
+		voxel_editor.editor_script_data.voxel_add(center + normal)
+		
 func _physics_process(delta):
 	voxel_editor.voxel_render.render(voxel_editor.editor_script_data.voxel_dict)
 
 
+func VecApproximateZero(inVec):
+	if(inVec is Vector3):
+		return Vector3(FloatApproximateZero(inVec.x), FloatApproximateZero(inVec.y), FloatApproximateZero(inVec.z))
+	if(inVec is Vector2):
+		return Vector2(FloatApproximateZero(inVec.x), FloatApproximateZero(inVec.y))
+	print("catch error in func VecApproximate:inVec can only be vector")
+	return null
+	
+func VecRound(inVec):
+	if(inVec is Vector3):
+		return Vector3(int(round(inVec.x)), int(round(inVec.y)), int(round(inVec.z)))
+	if(inVec is Vector2):
+		return Vector2(int(round(inVec.x)), int(round(inVec.y)))
+	print("catch error in func VecApproximate:inVec can only be vector")
+	return null
+
+func FloatApproximateZero(inFloat, clampMin = -0.01, clampMax = 0.01):
+	if(inFloat < clampMax and clampMin < inFloat):
+		return 0
+	return inFloat
 

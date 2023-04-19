@@ -23,7 +23,20 @@ func voxel_random_add():
 	var p = voxel_editor.voxel_render.Voxel.new(Vector3(pos_row, 0, pos_col), color)
 	voxel_dict[p.get_id()] = p
 
+func voxel_add(pos, color = Color(rand_range(0, 1), rand_range(0, 1), rand_range(0, 1), rand_range(0, 1))):
+	var p = voxel_editor.voxel_render.Voxel.new(VecRound(pos), color)
+
+	voxel_dict[p.get_id()] = p
+
+
 
 func voxel_claer():
 	voxel_dict.clear()
 
+func VecRound(inVec):
+	if(inVec is Vector3):
+		return Vector3(int(round(inVec.x)), int(round(inVec.y)), int(round(inVec.z)))
+	if(inVec is Vector2):
+		return Vector2(int(round(inVec.x)), int(round(inVec.y)))
+	print("catch error in func VecApproximate:inVec can only be vector")
+	return null

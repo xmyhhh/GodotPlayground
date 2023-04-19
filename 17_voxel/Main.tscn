@@ -115,12 +115,12 @@ AutoSurround/enable = false
 [node name="Render" type="Spatial" parent="."]
 
 [node name="Grid" type="MultiMeshInstance" parent="Render"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0 )
 material_override = SubResource( 4 )
 multimesh = SubResource( 9 )
 script = ExtResource( 2 )
 
 [node name="Voxel" type="MultiMeshInstance" parent="Render"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
 material_override = SubResource( 13 )
 multimesh = SubResource( 11 )
 script = ExtResource( 1 )
