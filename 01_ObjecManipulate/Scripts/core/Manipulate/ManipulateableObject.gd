@@ -19,7 +19,7 @@ var manipulateActionConfigDict = {
 	"Position" : {
 		"ActionDirection":["XAsix", "YAsix", "ZAsix"],
 		"ActionConstraint":ManipulateActionConstraintType.ByGrid,
-		"ActionConstraintFactor": 0.2
+		"ActionConstraintFactor": 1
 	}, 
 	"Rotation" : {
 		"ActionDirection":["XAsix", "YAsix", "ZAsix"],
@@ -214,6 +214,7 @@ func BoundingBoxGen(depth, width, height):
 	return boundingBoxRoot
 	
 func ReleseHandle():
+	
 	if(currentHandleInfo.handleType == ManipulateActionType.Position):
 		if(is_instance_valid(projectionPlaneNode)):
 			projectionPlaneNode.queue_free()
@@ -352,10 +353,21 @@ func ScaleHandleProcess(event):
 #		var distanceCurrent = (intersection.position - currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation).length()
 		var distance = (screebSurfaceVec3_0 - screebSurfaceVec3_1).dot(event.position - startTouchPos) * scaleSpeed + 1
 		print(distance)
+		print("befor:oldDiagonalGobalPos - transform.origin", oldDiagonalGobalPos - transform.origin)
+		var newDiagonalGobalPos2 = (oldDiagonalGobalPos - transform.origin ) * Vector3(distance, distance, distance)
+		print("transform.origin", transform.origin)
+
 		transform.origin = Vector3(0, 0, 0)
+		print("befor:basis.scaled", currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation)
 		transform.basis = objStartTrans.basis.scaled(Vector3(distance, distance, distance))
 		var newDiagonalGobalPos =  currentHandleInfo.handleData["diagonalMeshInstNode"].global_translation
+
 		transform.origin = oldDiagonalGobalPos - newDiagonalGobalPos
+		print("oldDiagonalGobalPos ", oldDiagonalGobalPos)
+		print("newDiagonalGobalPos ", newDiagonalGobalPos)  #一直在变
+		print("newDiagonalGobalPos2 ", newDiagonalGobalPos2)  #一直在变
+		print("--")
+
 #endregion
 
 #region Tool Script

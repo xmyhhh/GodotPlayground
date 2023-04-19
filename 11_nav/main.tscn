@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://11_nav/AGENT.gd" type="Script" id=1]
+[ext_resource path="res://11_nav/main.gd" type="Script" id=2]
+[ext_resource path="res://11_nav/prefab/NavigationMeshInstance.tscn" type="PackedScene" id=3]
+
+[sub_resource type="CapsuleShape" id=5]
+
+[sub_resource type="CapsuleMesh" id=6]
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 0.931151, 0.109034, -0.347949, 0.0307781, 0.927338, 0.372958, 0.363332, -0.357989, 0.860136, -2.49542, 8.17981, 14.1859 )
+
+[node name="NavigationMeshInstance" parent="." instance=ExtResource( 3 )]
+
+[node name="AGENT" type="RigidBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.97678, 2.04456, 0 )
+mode = 2
+script = ExtResource( 1 )
+targetNodePath = NodePath("../Position3D")
+
+[node name="NavigationAgent" type="NavigationAgent" parent="AGENT"]
+path_desired_distance = 3.0
+avoidance_enabled = true
+
+[node name="CollisionShape" type="CollisionShape" parent="AGENT"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+shape = SubResource( 5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="AGENT/CollisionShape"]
+mesh = SubResource( 6 )
+
+[node name="RayCast" type="RayCast" parent="AGENT"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.272254, 0 )
+enabled = true
+cast_to = Vector3( 0, -2, 0 )
+
+[node name="Position3D" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 7 )
+
+[node name="Draw" type="ImmediateGeometry" parent="."]
+
+[connection signal="velocity_computed" from="AGENT/NavigationAgent" to="AGENT" method="_on_NavigationAgent_velocity_computed"]

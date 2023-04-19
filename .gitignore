@@ -36,6 +36,6 @@ local.properties
 # Jetbrains IDEs
 .idea/
 
-
+**.pck
 
 # create by 侯万

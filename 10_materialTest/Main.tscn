@@ -1,0 +1,43 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://10_materialTest/Main.gd" type="Script" id=1]
+[ext_resource path="res://font/dynamicFont/content/contentT1.tres" type="DynamicFont" id=2]
+[ext_resource path="res://10_materialTest/ProtagonistCamera.gd" type="Script" id=3]
+
+[sub_resource type="PlaneMesh" id=1]
+size = Vector2( 200, 200 )
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+mesh = SubResource( 1 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 0.211422, 0.575032, -0.790332, 0, 0.808617, 0.588335, 0.977241, -0.124406, 0.170985, -23.7034, 17.6451, 5.12812 )
+far = 8192.0
+script = ExtResource( 3 )
+Protagonist/type = 1
+Protagonist/Point = Vector3( 0, 0, 0 )
+Lerp/enable = true
+Lerp/speed = 0.3
+Angel/zenithOffset = 0.3
+Angel/azimuthOffset = 72.5067
+Distance/Max = 100.0
+Distance/Min = 30.0
+Distance/offset = 0.0
+AutoSurround/enable = true
+AutoSurround/speed = 0.1
+
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Label" type="Label" parent="Control"]
+margin_right = 120.0
+margin_bottom = 55.0
+custom_fonts/font = ExtResource( 2 )
+text = "FPS 143"
+
+[node name="OmniLight" type="OmniLight" parent="."]
+transform = Transform( -0.948445, 0.316941, 0, -0.316941, -0.948445, 0, 0, 0, 1, 0, 10, 0 )

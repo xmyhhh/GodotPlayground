@@ -1,0 +1,20 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/museum_art05.obj-ab74bcd2b8351ec256d63fcec0799456.mesh"
+
+[deps]
+
+files=[ "res://.import/museum_art05.obj-ab74bcd2b8351ec256d63fcec0799456.mesh" ]
+
+source_file="res://10_materialTest/model/museum_art05.obj"
+dest_files=[ "res://.import/museum_art05.obj-ab74bcd2b8351ec256d63fcec0799456.mesh", "res://.import/museum_art05.obj-ab74bcd2b8351ec256d63fcec0799456.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+octahedral_compression=true
+optimize_mesh_flags=4286

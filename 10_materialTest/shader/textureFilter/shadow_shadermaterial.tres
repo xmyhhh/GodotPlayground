@@ -1,0 +1,56 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+uniform vec4  garyColor = vec4(0.2, 0.2, 0.2, 0.4);
+uniform vec2  shadowOffset = vec2(0.05, -0.05);
+uniform float blurRange = 0.0025 ;
+void fragment(){
+	vec2 uv = UV + shadowOffset;
+	vec4 inputColor = texture(TEXTURE, uv);
+	if(inputColor.x + inputColor.y + inputColor.z >0. ){
+		COLOR = garyColor;
+	}
+	else{
+		vec4 col = vec4(0.);
+		
+		col += texture(TEXTURE, uv + vec2(blurRange, -blurRange) );
+		col += texture(TEXTURE, uv + vec2(-blurRange, -blurRange));
+		col += texture(TEXTURE, uv + vec2(blurRange, blurRange));
+		col += texture(TEXTURE, uv + vec2(-blurRange, blurRange));
+		col += texture(TEXTURE, uv + vec2(blurRange, 0.));
+		col += texture(TEXTURE, uv + vec2(-blurRange, 0.));
+		col += texture(TEXTURE, uv + vec2(0., -blurRange));
+		col += texture(TEXTURE, uv + vec2(0., blurRange));
+		
+		float blurRange2 = 2. * blurRange;
+		col += texture(TEXTURE, uv + vec2(blurRange2, -blurRange2) );
+		col += texture(TEXTURE, uv + vec2(-blurRange2, -blurRange2));
+		col += texture(TEXTURE, uv + vec2(blurRange2, blurRange2));
+		col += texture(TEXTURE, uv + vec2(-blurRange2, blurRange2));
+		col += texture(TEXTURE, uv + vec2(blurRange2, 0.));
+		col += texture(TEXTURE, uv + vec2(-blurRange2, 0.));
+		col += texture(TEXTURE, uv + vec2(0., -blurRange2));
+		col += texture(TEXTURE, uv + vec2(0., blurRange2));
+		
+		float blurRange3 = 3. * blurRange;
+		col += texture(TEXTURE, uv + vec2(blurRange3, -blurRange3) );
+		col += texture(TEXTURE, uv + vec2(-blurRange3, -blurRange3));
+		col += texture(TEXTURE, uv + vec2(blurRange3, blurRange3));
+		col += texture(TEXTURE, uv + vec2(-blurRange3, blurRange3));
+		col += texture(TEXTURE, uv + vec2(blurRange3, 0.));
+		col += texture(TEXTURE, uv + vec2(-blurRange3, 0.));
+		col += texture(TEXTURE, uv + vec2(0., -blurRange3));
+		col += texture(TEXTURE, uv + vec2(0., blurRange3));
+		col /= 27.; 
+		COLOR = garyColor * col;
+	}
+}
+
+"
+
+[resource]
+shader = SubResource( 1 )
+shader_param/garyColor = Plane( 0.2, 0.2, 0.2, 0.4 )
+shader_param/shadowOffset = Vector2( 0.05, -0.05 )
+shader_param/blurRange = 0.0025

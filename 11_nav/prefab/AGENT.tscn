@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://11_nav/AGENT.gd" type="Script" id=1]
+
+[sub_resource type="CapsuleShape" id=5]
+
+[sub_resource type="CapsuleMesh" id=6]
+
+[node name="AGENT" type="RigidBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.97678, 2.04456, 0 )
+mode = 2
+script = ExtResource( 1 )
+targetNodePath = NodePath("../Position3D")
+
+[node name="NavigationAgent" type="NavigationAgent" parent="."]
+avoidance_enabled = true
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+shape = SubResource( 5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="CollisionShape"]
+mesh = SubResource( 6 )
+
+[node name="RayCast" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.272254, 0 )
+enabled = true
+cast_to = Vector3( 0, -2, 0 )
+
+[connection signal="velocity_computed" from="NavigationAgent" to="." method="_on_NavigationAgent_velocity_computed"]

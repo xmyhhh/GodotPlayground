@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://14_camBlend/script/blendCamera.gd" type="Script" id=1]
+
+[node name="Camera2" type="Camera"]
+script = ExtResource( 1 )

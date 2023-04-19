@@ -1,0 +1,41 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[sub_resource type="Shader" id=5]
+code = "shader_type canvas_item;
+
+uniform int strength: hint_range(1, 10) = 5;
+
+const float PI = 3.14159265358979323846;
+const float STD = 1.5;
+
+
+float gauss(int x, int y){
+	return exp(-float(x * x + y * y) / (2. * STD * STD)) / (2. * PI * STD * STD);
+}
+
+
+void fragment() {
+//texture(SCREEN_TEXTURE, (UV / TEXTURE_PIXEL_SIZE + vec2(float(k / i_diff), float(k % i_diff))) * TEXTURE_PIXEL_SIZE);	
+	float radius = 0.001;
+	vec4 col = vec4(0);
+	
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(-radius,-radius));
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(0,-radius));
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(radius,-radius));
+
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(-radius,0));
+	col += 5. * texture(SCREEN_TEXTURE, SCREEN_UV + vec2(0,0));
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(radius,0));
+
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(-radius,radius));
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(0,radius));
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(radius,radius));
+	col += 6. * vec4(0,0,0,1);
+	col/=19.0;
+	
+	COLOR=col;
+}"
+
+[resource]
+shader = SubResource( 5 )
+shader_param/strength = 10

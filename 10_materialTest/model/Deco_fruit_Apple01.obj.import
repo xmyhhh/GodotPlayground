@@ -1,0 +1,20 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Deco_fruit_Apple01.obj-ea97811fcb7e002f495f1357bdb1ec6c.mesh"
+
+[deps]
+
+files=[ "res://.import/Deco_fruit_Apple01.obj-ea97811fcb7e002f495f1357bdb1ec6c.mesh" ]
+
+source_file="res://10_materialTest/model/Deco_fruit_Apple01.obj"
+dest_files=[ "res://.import/Deco_fruit_Apple01.obj-ea97811fcb7e002f495f1357bdb1ec6c.mesh", "res://.import/Deco_fruit_Apple01.obj-ea97811fcb7e002f495f1357bdb1ec6c.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+octahedral_compression=true
+optimize_mesh_flags=4286
