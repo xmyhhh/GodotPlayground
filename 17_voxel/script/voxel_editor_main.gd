@@ -14,5 +14,12 @@ func init():
 #	voxel_editor.voxel_render.render(voxel_editor.editor_data.voxel_array)
 
 
+
+
+
+
 func _physics_process(delta):
-	voxel_editor.voxel_render.render(voxel_editor.editor_script_data.voxel_array)
+	voxel_editor.voxel_render.render(voxel_editor.editor_script_data.voxel_dict)
+
+
+
