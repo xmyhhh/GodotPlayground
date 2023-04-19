@@ -14,8 +14,15 @@ func init():
 #	voxel_editor.voxel_render.render(voxel_editor.editor_data.voxel_array)
 
 
-
-
+func ray_cast(event):
+	var currentCamera = get_viewport().get_camera()
+	var spaceSatae = voxel_editor.get_world().direct_space_state
+	var rayOrigin = currentCamera.project_ray_origin(event.position)
+	var rayEnd = rayOrigin + currentCamera.project_ray_normal(event.position) * 100
+	var intersection = spaceSatae.intersect_ray(rayOrigin, rayEnd, [], 0xFFFFFFFF, false, true)
+	if not intersection.empty()	:
+		print(intersection.position)
+		print(intersection.normal)
 
 
 func _physics_process(delta):

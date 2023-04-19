@@ -81,8 +81,9 @@ func _input(event):
 ##endregion
 
 func handle_input_click(event):
-	print("click")
-	print(event)
+	voxel_editor.editor_script_main.ray_cast(event)
+#	print("click")
+#	print(event)
 	
 func handle_input_drag(event):
 	var cam = get_viewport().get_camera()
@@ -91,14 +92,14 @@ func handle_input_drag(event):
 
 	target_world_pos += ((cam.get_global_transform().basis.x) * dir.x + (cam.get_global_transform().basis.y) * dir.y)
 	voxel_editor.editor_camera.lookAtPoint = target_world_pos
-	print("drag")
-	print(event)
+#	print("drag")
+#	print(event)
 
 func handle_input_rot(event):
 	voxel_editor.editor_camera.SetZenithAngelOffsetIncrement(-event.relative.y * 0.002)
 	voxel_editor.editor_camera.SetAzimuthAngelOffsetIncrement(event.relative.x * 0.002)
-	print("rot")
-	print(event)
+#	print("rot")
+#	print(event)
 	
 func handle_input_zoom(event):
 	if(event is InputEventMouseButton):
@@ -107,5 +108,5 @@ func handle_input_zoom(event):
 			
 		if(event.button_index == BUTTON_WHEEL_DOWN):
 			voxel_editor.editor_camera.distanceOffset -= 0.05
-	print("zoom")
-	print(event)
+#	print("zoom")
+#	print(event)

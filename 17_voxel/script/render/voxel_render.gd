@@ -26,7 +26,7 @@ func render(voxel_data):
 			remove_area_by_id(item)
 	
 	voxel_data_old = voxel_data.duplicate()
-	pass
+	
 	
 func remove_area_by_id(id):
 	var p = area_node.get_node(id)
