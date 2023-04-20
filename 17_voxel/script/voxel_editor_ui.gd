@@ -6,6 +6,8 @@ func init():
 	voxel_editor.editor_ui.get_node("HBoxContainer/add").connect("pressed", self, "addButtonPressedCallback")
 	voxel_editor.editor_ui.get_node("HBoxContainer/remove").connect("pressed", self, "removeButtonPressedCallback")
 	voxel_editor.editor_ui.get_node("HBoxContainer/clear").connect("pressed", self, "clearButtonPressedCallback")
+	voxel_editor.editor_ui.get_node("HBoxContainer/undo").connect("pressed", self, "undoButtonPressedCallback")
+	voxel_editor.editor_ui.get_node("HBoxContainer/redo").connect("pressed", self, "redoButtonPressedCallback")
 	pass # Replace with function body.
 
 func addButtonPressedCallback():
@@ -16,3 +18,9 @@ func clearButtonPressedCallback():
 
 func removeButtonPressedCallback():
 	voxel_editor.editor_script_main.set_mode(voxel_editor.editor_script_main.Editor_Mode.Remove)
+
+func undoButtonPressedCallback():
+	voxel_editor.editor_script_main.undo()
+	
+func redoButtonPressedCallback():
+	voxel_editor.editor_script_main.redo()
