@@ -32,7 +32,7 @@ window/vsync/use_vsync=false
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/camera_tween/plugin.cfg", "res://addons/verlet_rope_gd/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/camera_tween/plugin.cfg" )
 
 [global]
 

@@ -3,12 +3,16 @@ onready var voxel_editor = get_tree().get_root().find_node("Voxel_editor", true,
 
 
 func init():
-	voxel_editor.editor_ui.get_node("add").connect("pressed", self, "addButtonPressedCallback")
-	voxel_editor.editor_ui.get_node("clear").connect("pressed", self, "clearButtonPressedCallback")
+	voxel_editor.editor_ui.get_node("HBoxContainer/add").connect("pressed", self, "addButtonPressedCallback")
+	voxel_editor.editor_ui.get_node("HBoxContainer/remove").connect("pressed", self, "removeButtonPressedCallback")
+	voxel_editor.editor_ui.get_node("HBoxContainer/clear").connect("pressed", self, "clearButtonPressedCallback")
 	pass # Replace with function body.
 
 func addButtonPressedCallback():
-	voxel_editor.editor_script_data.voxel_random_add()
+	voxel_editor.editor_script_main.set_mode(voxel_editor.editor_script_main.Editor_Mode.Add)
 
 func clearButtonPressedCallback():
 	voxel_editor.editor_script_data.voxel_claer()
+
+func removeButtonPressedCallback():
+	voxel_editor.editor_script_main.set_mode(voxel_editor.editor_script_main.Editor_Mode.Remove)

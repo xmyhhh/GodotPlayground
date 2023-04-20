@@ -5,6 +5,10 @@ onready var area_node = get_node("Area")
 var creat_area = true
 var voxel_data_old
 
+func _ready():
+	set_meta("Voxel", true)
+
+
 func render(voxel_data):
 	self.multimesh.instance_count = voxel_data.size()
 	var i = -1

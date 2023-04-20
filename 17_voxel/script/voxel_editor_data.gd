@@ -24,11 +24,18 @@ func voxel_random_add():
 	voxel_dict[p.get_id()] = p
 
 func voxel_add(pos, color = Color(rand_range(0, 1), rand_range(0, 1), rand_range(0, 1), rand_range(0, 1))):
-	var p = voxel_editor.voxel_render.Voxel.new(VecRound(pos), color)
+	var p  = VecRound(pos)
+	var key = str(p.x) + ',' + str(p.y) + ',' + str(p.z)
+	if(voxel_dict.has(key) or p.y<0):
+		return
+	var q = voxel_editor.voxel_render.Voxel.new(p, color)
+	voxel_dict[q.get_id()] = q
 
-	voxel_dict[p.get_id()] = p
-
-
+func voxel_remove(pos):
+	var p  = VecRound(pos)
+	var key = str(p.x) + ',' + str(p.y) + ',' + str(p.z)
+	if(voxel_dict.has(key)):
+		voxel_dict.erase(key)
 
 func voxel_claer():
 	voxel_dict.clear()
