@@ -15,7 +15,8 @@ func addButtonPressedCallback():
 
 func clearButtonPressedCallback():
 	voxel_editor.editor_script_data.voxel_claer()
-
+	voxel_editor.editor_script_main.reset()
+	
 func removeButtonPressedCallback():
 	voxel_editor.editor_script_main.set_mode(voxel_editor.editor_script_main.Editor_Mode.Remove)
 

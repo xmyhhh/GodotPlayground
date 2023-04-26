@@ -25,6 +25,9 @@ func voxel_random_add():
 
 func voxel_add(pos, color = Color(rand_range(0, 1), rand_range(0, 1), rand_range(0, 1), rand_range(0, 1))):
 	var p  = VecRound(pos)
+
+	if(abs(p.x) > (voxel_editor.editor_config.row - 1) / 2 or abs(p.z) > (voxel_editor.editor_config.col - 1) / 2):
+		return 
 	var key = str(p.x) + ',' + str(p.y) + ',' + str(p.z)
 	if(voxel_dict.has(key) or p.y<0):
 		return

@@ -17,6 +17,10 @@ func init():
 func set_mode(mode):
 	if(mode == 0 or mode ==1):
 		editor_mode = mode 
+		
+func reset():
+	undo_stack.clear()
+	redo_stack.clear()
 
 func undo():
 	if(undo_stack.size() > 0):
@@ -66,7 +70,7 @@ func ray_cast(event):
 			match(editor_mode):
 				Editor_Mode.Add:
 					voxel_editor.editor_script_data.voxel_add(target_center)
-					undo_stack.push_back(Instruct.new(Instruct_Type.Add,target_center))
+					undo_stack.push_back(Instruct.new(Instruct_Type.Add, target_center))
 				Editor_Mode.Remove:
 					voxel_editor.editor_script_data.voxel_remove(self_center)
 					undo_stack.push_back(Instruct.new(Instruct_Type.Remove, self_center))
@@ -74,11 +78,6 @@ func ray_cast(event):
 			
 func _physics_process(delta):
 	voxel_editor.voxel_render.render(voxel_editor.editor_script_data.voxel_dict)
-
-
-
-
-
 
 func TryGetVoxelFace(collider):
 	if(collider.get_parent().has_meta("Voxel")):
@@ -89,7 +88,6 @@ func TryGetGrid(collider):
 	if(collider.get_parent().has_meta("Grid")):
 		return true
 	return false
-
 
 func VecApproximateZero(inVec):
 	if(inVec is Vector3):
