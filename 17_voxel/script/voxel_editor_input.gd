@@ -13,7 +13,7 @@ var drag_end = null
 var is_pressing = false
 var is_rot = false
 #region Godot Callback 
-func _input(event):
+func _unhandled_input(event):
 	if (event is InputEventScreenTouch) or(event is InputEventMouseMotion) or (event is InputEventMouseButton and (event.button_index == BUTTON_LEFT or event.button_index == BUTTON_WHEEL_UP or event.button_index == BUTTON_WHEEL_DOWN or event.button_index == BUTTON_MIDDLE)):
 			# 检查事件类型
 			if event is InputEventScreenTouch:

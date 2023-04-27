@@ -3,12 +3,12 @@ onready var voxel_editor = get_tree().get_root().find_node("Voxel_editor", true,
 
 
 func init():
-	return
-	voxel_editor.editor_ui.get_node("HBoxContainer/add").connect("pressed", self, "addButtonPressedCallback")
-	voxel_editor.editor_ui.get_node("HBoxContainer/remove").connect("pressed", self, "removeButtonPressedCallback")
-	voxel_editor.editor_ui.get_node("HBoxContainer/clear").connect("pressed", self, "clearButtonPressedCallback")
-	voxel_editor.editor_ui.get_node("HBoxContainer/undo").connect("pressed", self, "undoButtonPressedCallback")
-	voxel_editor.editor_ui.get_node("HBoxContainer/redo").connect("pressed", self, "redoButtonPressedCallback")
+
+	voxel_editor.editor_ui.get_node("MarginContainerLeft/Left/ToolList/VBoxContainer/Add").connect("pressed", self, "addButtonPressedCallback")
+	voxel_editor.editor_ui.get_node("MarginContainerLeft/Left/ToolList/VBoxContainer/Remove").connect("pressed", self, "removeButtonPressedCallback")
+	#voxel_editor.editor_ui.get_node("HBoxContainer/clear").connect("pressed", self, "clearButtonPressedCallback")
+	voxel_editor.editor_ui.get_node("MarginContainerLeft/Left/UndoRedo/HBoxContainer/Undo").connect("pressed", self, "undoButtonPressedCallback")
+	voxel_editor.editor_ui.get_node("MarginContainerLeft/Left/UndoRedo/HBoxContainer/Redo").connect("pressed", self, "redoButtonPressedCallback")
 	pass # Replace with function body.
 
 func addButtonPressedCallback():
