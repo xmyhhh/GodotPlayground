@@ -3,6 +3,7 @@ onready var voxel_editor = get_tree().get_root().find_node("Voxel_editor", true,
 
 
 func init():
+	return
 	voxel_editor.editor_ui.get_node("HBoxContainer/add").connect("pressed", self, "addButtonPressedCallback")
 	voxel_editor.editor_ui.get_node("HBoxContainer/remove").connect("pressed", self, "removeButtonPressedCallback")
 	voxel_editor.editor_ui.get_node("HBoxContainer/clear").connect("pressed", self, "clearButtonPressedCallback")
