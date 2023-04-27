@@ -78,24 +78,43 @@ code = "shader_type spatial;
 
 
 varying vec4 Instance_custom_data;
+varying vec3 vertex_m;
+
+uniform bool render_wire = true;
+uniform vec4 outline_color:hint_color;
+uniform float outline_length = 0.98;
+
 void vertex(){
-	Instance_custom_data = INSTANCE_CUSTOM;
+ Instance_custom_data = INSTANCE_CUSTOM;
+ vertex_m = VERTEX;
 }
 
 void fragment(){
+ vec3 color = Instance_custom_data.rgb;
 
+ if(render_wire){
+  if(abs(vertex_m.x)+ abs(vertex_m.y) > outline_length){
+   color = outline_color.rgb;
+ }
+ 
+  if(abs(vertex_m.y)+ abs(vertex_m.z) > outline_length){
+   color = outline_color.rgb;
+  }
+ 
+  if(abs(vertex_m.z)+ abs(vertex_m.x) > outline_length){
+   color = outline_color.rgb;
+  }
 
-	ALBEDO = Instance_custom_data.rgb;
-
-//	ALBEDO = vec3(UV.x, UV.y, 0);
-}
-
-
-
-"
+ }
+ ALBEDO = color;
+// ALBEDO = vec3(UV.x, UV.y, 0);
+}"
 
 [sub_resource type="ShaderMaterial" id=13]
 shader = SubResource( 12 )
+shader_param/render_wire = true
+shader_param/outline_color = null
+shader_param/outline_length = 0.98
 
 [sub_resource type="CubeMesh" id=10]
 size = Vector3( 1, 1, 1 )
@@ -106,6 +125,7 @@ custom_data_format = 1
 mesh = SubResource( 10 )
 
 [sub_resource type="Environment" id=16]
+ambient_light_color = Color( 1, 1, 1, 1 )
 
 [node name="Voxel_editor" type="Spatial"]
 script = ExtResource( 4 )
