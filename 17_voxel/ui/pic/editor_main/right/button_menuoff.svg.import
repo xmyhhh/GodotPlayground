@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/button_redo.svg-2bd6ea059be2db414b5ef403c76ec837.stex"
+path="res://.import/button_menuoff.svg-bffd0e7043d6a7779ad628475561f24a.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://17_voxel/ui/pic/button_redo.svg"
-dest_files=[ "res://.import/button_redo.svg-2bd6ea059be2db414b5ef403c76ec837.stex" ]
+source_file="res://17_voxel/ui/pic/editor_main/right/button_menuoff.svg"
+dest_files=[ "res://.import/button_menuoff.svg-bffd0e7043d6a7779ad628475561f24a.stex" ]
 
 [params]
 

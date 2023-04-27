@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/button_undo.svg-ab2adea23dc8b93e1ad6a39b2e0c7c6d.stex"
+path="res://.import/截屏2023-04-27 13.51.18.png-48344754d4385a920a477c4b62e46d05.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://17_voxel/ui/pic/button_undo.svg"
-dest_files=[ "res://.import/button_undo.svg-ab2adea23dc8b93e1ad6a39b2e0c7c6d.stex" ]
+source_file="res://17_voxel/ui/pic/截屏2023-04-27 13.51.18.png"
+dest_files=[ "res://.import/截屏2023-04-27 13.51.18.png-48344754d4385a920a477c4b62e46d05.stex" ]
 
 [params]
 
