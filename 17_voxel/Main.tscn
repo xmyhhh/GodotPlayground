@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=34 format=2]
 
 [ext_resource path="res://17_voxel/script/render/voxel_render.gd" type="Script" id=1]
 [ext_resource path="res://17_voxel/script/render/grid_render.gd" type="Script" id=2]
@@ -9,8 +9,21 @@
 [ext_resource path="res://17_voxel/script/voxel_editor_data.gd" type="Script" id=7]
 [ext_resource path="res://17_voxel/script/voxel_editor_input.gd" type="Script" id=8]
 [ext_resource path="res://17_voxel/script/voxel_editor_ui.gd" type="Script" id=9]
-[ext_resource path="res://font/Arvo-Bold.ttf" type="DynamicFontData" id=10]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/right/button_save.svg" type="Texture" id=10]
 [ext_resource path="res://17_voxel/script/voxel_editor_camera.gd" type="Script" id=11]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/right/button_cam.svg" type="Texture" id=12]
+[ext_resource path="res://17_voxel/ui/pic/截屏2023-04-27 13.51.18.png" type="Texture" id=13]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_add.svg" type="Texture" id=14]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_undo.svg" type="Texture" id=15]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_color_picker.svg" type="Texture" id=16]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/single_face.svg" type="Texture" id=17]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/right/button_menuoff.svg" type="Texture" id=18]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_redo.svg" type="Texture" id=19]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/line.svg" type="Texture" id=20]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_color.svg" type="Texture" id=21]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/right/button_exit.svg" type="Texture" id=22]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_remove.svg" type="Texture" id=23]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/multi_face.svg" type="Texture" id=24]
 
 [sub_resource type="Shader" id=3]
 code = "shader_type spatial;
@@ -93,10 +106,6 @@ transform_format = 1
 custom_data_format = 1
 mesh = SubResource( 10 )
 
-[sub_resource type="DynamicFont" id=14]
-size = 48
-font_data = ExtResource( 10 )
-
 [node name="Voxel_editor" type="Spatial"]
 script = ExtResource( 4 )
 
@@ -158,84 +167,267 @@ script = ExtResource( 7 )
 script = ExtResource( 9 )
 
 [node name="UI" type="Control" parent="."]
-margin_right = 40.0
-margin_bottom = 40.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI"]
-margin_right = 1072.0
-margin_bottom = 130.0
+[node name="截屏2023-04-27135118" type="Sprite" parent="UI"]
+visible = false
+position = Vector2( 958, 529 )
+scale = Vector2( 1.03482, 1.0348 )
+texture = ExtResource( 13 )
+
+[node name="MarginContainerLeft" type="MarginContainer" parent="UI"]
+margin_right = 330.0
+margin_bottom = 1080.0
+custom_constants/margin_top = 60
+custom_constants/margin_left = 100
+custom_constants/margin_bottom = 60
+
+[node name="Left" type="VBoxContainer" parent="UI/MarginContainerLeft"]
+margin_left = 100.0
+margin_top = 60.0
+margin_right = 330.0
+margin_bottom = 1020.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="clear" type="Button" parent="UI/HBoxContainer"]
-margin_right = 189.0
-margin_bottom = 130.0
+[node name="UndoRedo" type="Control" parent="UI/MarginContainerLeft/Left"]
+margin_right = 230.0
+margin_bottom = 106.0
+rect_min_size = Vector2( 0, 102 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_fonts/font = SubResource( 14 )
-text = "clear"
 
-[node name="Empty" type="Control" parent="UI/HBoxContainer"]
-margin_left = 193.0
-margin_right = 213.0
-margin_bottom = 130.0
-rect_min_size = Vector2( 20, 1.099 )
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/MarginContainerLeft/Left/UndoRedo"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -7.0
+rect_min_size = Vector2( 230, 104 )
 
-[node name="add" type="Button" parent="UI/HBoxContainer"]
-margin_left = 217.0
-margin_right = 406.0
-margin_bottom = 130.0
-rect_pivot_offset = Vector2( -1658, 550 )
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer"]
+margin_right = 102.0
+margin_bottom = 106.0
+rect_min_size = Vector2( 102, 102 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_fonts/font = SubResource( 14 )
-text = "add"
+texture = ExtResource( 15 )
+expand = true
+stretch_mode = 6
 
-[node name="Empty2" type="Control" parent="UI/HBoxContainer"]
-margin_left = 410.0
-margin_right = 430.0
-margin_bottom = 130.0
-rect_min_size = Vector2( 20, 1.099 )
-
-[node name="remove" type="Button" parent="UI/HBoxContainer"]
-margin_left = 434.0
-margin_right = 637.0
-margin_bottom = 130.0
-rect_pivot_offset = Vector2( -1658, 550 )
+[node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer"]
+margin_left = 106.0
+margin_right = 124.0
+margin_bottom = 106.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_fonts/font = SubResource( 14 )
-text = "remove"
 
-[node name="Empty3" type="Control" parent="UI/HBoxContainer"]
-margin_left = 641.0
-margin_right = 661.0
-margin_bottom = 130.0
-rect_min_size = Vector2( 20, 1.099 )
-
-[node name="undo" type="Button" parent="UI/HBoxContainer"]
-margin_left = 665.0
-margin_right = 854.0
-margin_bottom = 130.0
-rect_pivot_offset = Vector2( -1658, 550 )
+[node name="TextureRect2" type="TextureRect" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer"]
+margin_left = 128.0
+margin_right = 230.0
+margin_bottom = 106.0
+rect_min_size = Vector2( 102, 102 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_fonts/font = SubResource( 14 )
-text = "undo"
+texture = ExtResource( 19 )
+expand = true
+stretch_mode = 6
 
-[node name="Empty4" type="Control" parent="UI/HBoxContainer"]
-margin_left = 858.0
-margin_right = 878.0
-margin_bottom = 130.0
-rect_min_size = Vector2( 20, 1.099 )
-
-[node name="redo" type="Button" parent="UI/HBoxContainer"]
-margin_left = 882.0
-margin_right = 1072.0
-margin_bottom = 130.0
-rect_pivot_offset = Vector2( -1658, 550 )
+[node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left"]
+margin_top = 110.0
+margin_right = 230.0
+margin_bottom = 216.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_fonts/font = SubResource( 14 )
-text = "redo"
+
+[node name="ToolList" type="Control" parent="UI/MarginContainerLeft/Left"]
+margin_top = 220.0
+margin_right = 230.0
+margin_bottom = 740.0
+rect_min_size = Vector2( 0, 520 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/MarginContainerLeft/Left/ToolList"]
+anchor_bottom = 1.0
+margin_right = 102.0
+margin_bottom = -8.0
+rect_min_size = Vector2( 102, 0 )
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+margin_right = 102.0
+margin_bottom = 102.0
+rect_min_size = Vector2( 102, 102 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 14 )
+expand = true
+stretch_mode = 5
+
+[node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+margin_top = 106.0
+margin_right = 102.0
+margin_bottom = 130.0
+rect_min_size = Vector2( 0, 24 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect2" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+margin_top = 134.0
+margin_right = 102.0
+margin_bottom = 236.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 23 )
+
+[node name="Empty4" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+margin_top = 240.0
+margin_right = 102.0
+margin_bottom = 288.0
+rect_min_size = Vector2( 0, 48 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 20 )
+stretch_mode = 4
+
+[node name="TextureRect3" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+margin_top = 292.0
+margin_right = 102.0
+margin_bottom = 394.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 21 )
+
+[node name="Empty3" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+margin_top = 398.0
+margin_right = 102.0
+margin_bottom = 446.0
+rect_min_size = Vector2( 0, 48 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 20 )
+stretch_mode = 4
+
+[node name="TextureRect4" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+margin_top = 450.0
+margin_right = 102.0
+margin_bottom = 552.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 16 )
+
+[node name="Empty2" type="Control" parent="UI/MarginContainerLeft/Left"]
+margin_top = 744.0
+margin_right = 230.0
+margin_bottom = 850.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SelectMode" type="Control" parent="UI/MarginContainerLeft/Left"]
+margin_top = 854.0
+margin_right = 230.0
+margin_bottom = 960.0
+rect_min_size = Vector2( 0, 102 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/MarginContainerLeft/Left/SelectMode"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 230, 104 )
+
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
+margin_right = 102.0
+margin_bottom = 106.0
+rect_min_size = Vector2( 102, 102 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 17 )
+expand = true
+stretch_mode = 6
+
+[node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
+margin_left = 106.0
+margin_right = 124.0
+margin_bottom = 106.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect2" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
+margin_left = 128.0
+margin_right = 230.0
+margin_bottom = 106.0
+rect_min_size = Vector2( 102, 102 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 24 )
+expand = true
+stretch_mode = 6
+
+[node name="MarginContainerRight" type="MarginContainer" parent="UI"]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -174.0
+custom_constants/margin_right = 60
+custom_constants/margin_top = 60
+custom_constants/margin_bottom = 60
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/MarginContainerRight"]
+margin_top = 60.0
+margin_right = 114.0
+margin_bottom = 1020.0
+rect_min_size = Vector2( 0, 102 )
+
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainerRight/VBoxContainer"]
+margin_right = 114.0
+margin_bottom = 102.0
+rect_min_size = Vector2( 102, 102 )
+size_flags_horizontal = 3
+texture = ExtResource( 18 )
+
+[node name="Control" type="Control" parent="UI/MarginContainerRight/VBoxContainer"]
+margin_top = 106.0
+margin_right = 114.0
+margin_bottom = 130.0
+rect_min_size = Vector2( 0, 24 )
+size_flags_horizontal = 3
+
+[node name="TextureRect2" type="TextureRect" parent="UI/MarginContainerRight/VBoxContainer"]
+margin_top = 134.0
+margin_right = 114.0
+margin_bottom = 236.0
+rect_min_size = Vector2( 102, 102 )
+size_flags_horizontal = 3
+texture = ExtResource( 12 )
+
+[node name="Control2" type="Control" parent="UI/MarginContainerRight/VBoxContainer"]
+margin_top = 240.0
+margin_right = 114.0
+margin_bottom = 264.0
+rect_min_size = Vector2( 0, 24 )
+size_flags_horizontal = 3
+
+[node name="TextureRect3" type="TextureRect" parent="UI/MarginContainerRight/VBoxContainer"]
+margin_top = 268.0
+margin_right = 114.0
+margin_bottom = 370.0
+rect_min_size = Vector2( 102, 102 )
+size_flags_horizontal = 3
+texture = ExtResource( 10 )
+
+[node name="Control3" type="Control" parent="UI/MarginContainerRight/VBoxContainer"]
+margin_top = 374.0
+margin_right = 114.0
+margin_bottom = 398.0
+rect_min_size = Vector2( 0, 24 )
+size_flags_horizontal = 3
+
+[node name="TextureRect4" type="TextureRect" parent="UI/MarginContainerRight/VBoxContainer"]
+margin_top = 402.0
+margin_right = 114.0
+margin_bottom = 504.0
+rect_min_size = Vector2( 102, 102 )
+size_flags_horizontal = 3
+texture = ExtResource( 22 )
