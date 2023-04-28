@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=2]
+[gd_scene load_steps=45 format=2]
 
 [ext_resource path="res://17_voxel/script/render/voxel_render.gd" type="Script" id=1]
 [ext_resource path="res://17_voxel/script/render/grid_render.gd" type="Script" id=2]
@@ -24,6 +24,13 @@
 [ext_resource path="res://17_voxel/ui/pic/editor_main/right/button_exit.svg" type="Texture" id=22]
 [ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_remove.svg" type="Texture" id=23]
 [ext_resource path="res://17_voxel/ui/pic/editor_main/left/multi_face.svg" type="Texture" id=24]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_undo_pressed.svg" type="Texture" id=25]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_redo_pressed.svg" type="Texture" id=26]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_add_pressed.svg" type="Texture" id=27]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_remove_pressed.svg" type="Texture" id=28]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/button_color_pressed.svg" type="Texture" id=29]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/multi_face_pressed.svg" type="Texture" id=30]
+[ext_resource path="res://17_voxel/ui/pic/editor_main/left/single_face_pressed.svg" type="Texture" id=31]
 
 [sub_resource type="Shader" id=3]
 code = "shader_type spatial;
@@ -268,6 +275,7 @@ size_flags_vertical = 3
 script = ExtResource( 13 )
 OnHover = NodePath("Hover")
 OnNormal = NodePath("Normal")
+keepState = false
 
 [node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Undo"]
 margin_right = 40.0
@@ -280,7 +288,7 @@ visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-texture = ExtResource( 21 )
+texture = ExtResource( 25 )
 
 [node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer"]
 margin_left = 106.0
@@ -300,6 +308,7 @@ size_flags_vertical = 3
 script = ExtResource( 13 )
 OnHover = NodePath("Hover")
 OnNormal = NodePath("Normal")
+keepState = false
 
 [node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Redo"]
 anchor_right = 1.0
@@ -312,7 +321,7 @@ visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-texture = ExtResource( 21 )
+texture = ExtResource( 26 )
 
 [node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left"]
 margin_top = 110.0
@@ -339,17 +348,28 @@ rect_min_size = Vector2( 102, 0 )
 mouse_filter = 2
 size_flags_vertical = 3
 
-[node name="Add" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+[node name="Add" type="Control" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_right = 102.0
 margin_bottom = 102.0
 rect_min_size = Vector2( 102, 102 )
-mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-texture = ExtResource( 14 )
-expand = true
-stretch_mode = 5
 script = ExtResource( 13 )
+OnHover = NodePath("Hover")
+OnNormal = NodePath("Normal")
+
+[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Add"]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource( 14 )
+
+[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Add"]
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource( 27 )
 
 [node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_top = 106.0
@@ -360,15 +380,29 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Remove" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+[node name="Remove" type="Control" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_top = 134.0
 margin_right = 102.0
 margin_bottom = 236.0
-mouse_filter = 2
+rect_min_size = Vector2( 102, 102 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
-texture = ExtResource( 23 )
 script = ExtResource( 13 )
+OnHover = NodePath("Hover")
+OnNormal = NodePath("Normal")
+
+[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Remove"]
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource( 23 )
+
+[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Remove"]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource( 28 )
 
 [node name="Empty4" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_top = 240.0
@@ -381,15 +415,29 @@ size_flags_vertical = 3
 texture = ExtResource( 20 )
 stretch_mode = 4
 
-[node name="Color" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+[node name="Color" type="Control" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_top = 292.0
 margin_right = 102.0
 margin_bottom = 394.0
-mouse_filter = 2
+rect_min_size = Vector2( 102, 102 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
-texture = ExtResource( 21 )
 script = ExtResource( 13 )
+OnHover = NodePath("Hover")
+OnNormal = NodePath("Normal")
+
+[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Color"]
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource( 21 )
+
+[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Color"]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource( 29 )
 
 [node name="Empty3" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_top = 398.0
@@ -435,17 +483,28 @@ anchor_bottom = 1.0
 rect_min_size = Vector2( 230, 104 )
 mouse_filter = 2
 
-[node name="TextureRect" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
+[node name="TextureRect" type="Control" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
 margin_right = 102.0
 margin_bottom = 106.0
 rect_min_size = Vector2( 102, 102 )
-mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-texture = ExtResource( 17 )
-expand = true
-stretch_mode = 6
 script = ExtResource( 13 )
+OnHover = NodePath("Hover")
+OnNormal = NodePath("Normal")
+
+[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect"]
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource( 17 )
+
+[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect"]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource( 31 )
 
 [node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
 margin_left = 106.0
@@ -455,18 +514,29 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="TextureRect2" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
+[node name="TextureRect2" type="Control" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
 margin_left = 128.0
 margin_right = 230.0
 margin_bottom = 106.0
 rect_min_size = Vector2( 102, 102 )
-mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-texture = ExtResource( 24 )
-expand = true
-stretch_mode = 6
 script = ExtResource( 13 )
+OnHover = NodePath("Hover")
+OnNormal = NodePath("Normal")
+
+[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect2"]
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource( 24 )
+
+[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect2"]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource( 30 )
 
 [node name="MarginContainerRight" type="MarginContainer" parent="UI"]
 anchor_left = 1.0
