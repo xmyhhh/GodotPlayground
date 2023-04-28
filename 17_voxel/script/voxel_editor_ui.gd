@@ -9,20 +9,20 @@ var button_color
 
 func init():
 
-	button_add = voxel_editor.editor_ui.get_node("MarginContainerLeft/Left/ToolList/VBoxContainer/Add")
+	button_add = voxel_editor.editor_ui.get_node("EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer/Add")
 	button_add.connect("pressed", self, "addButtonPressedCallback")
 	
-	button_remove = voxel_editor.editor_ui.get_node("MarginContainerLeft/Left/ToolList/VBoxContainer/Remove")
+	button_remove = voxel_editor.editor_ui.get_node("EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer/Remove")
 	button_remove.connect("pressed", self, "removeButtonPressedCallback")
 	
 	#voxel_editor.editor_ui.get_node("HBoxContainer/clear").connect("pressed", self, "clearButtonPressedCallback")
-	button_undo = voxel_editor.editor_ui.get_node("MarginContainerLeft/Left/UndoRedo/HBoxContainer/Undo")
+	button_undo = voxel_editor.editor_ui.get_node("EditorMain/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Undo")
 	button_undo.connect("pressed", self, "undoButtonPressedCallback")
 	
-	button_redo = voxel_editor.editor_ui.get_node("MarginContainerLeft/Left/UndoRedo/HBoxContainer/Redo")
+	button_redo = voxel_editor.editor_ui.get_node("EditorMain/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Redo")
 	button_redo.connect("pressed", self, "redoButtonPressedCallback")
 
-	button_color = voxel_editor.editor_ui.get_node("MarginContainerLeft/Left/ToolList/VBoxContainer/Color")
+	button_color = voxel_editor.editor_ui.get_node("EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer/Color")
 	button_color.connect("pressed", self, "colorButtonPressedCallback")
 	
 func addButtonPressedCallback():

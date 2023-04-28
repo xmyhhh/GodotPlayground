@@ -234,7 +234,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="MarginContainerLeft" type="MarginContainer" parent="UI"]
+[node name="EditorMain" type="Control" parent="UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MarginContainerLeft" type="MarginContainer" parent="UI/EditorMain"]
 margin_right = 330.0
 margin_bottom = 1080.0
 mouse_filter = 2
@@ -242,7 +246,7 @@ custom_constants/margin_top = 60
 custom_constants/margin_left = 100
 custom_constants/margin_bottom = 60
 
-[node name="Left" type="VBoxContainer" parent="UI/MarginContainerLeft"]
+[node name="Left" type="VBoxContainer" parent="UI/EditorMain/MarginContainerLeft"]
 margin_left = 100.0
 margin_top = 60.0
 margin_right = 330.0
@@ -251,7 +255,7 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="UndoRedo" type="Control" parent="UI/MarginContainerLeft/Left"]
+[node name="UndoRedo" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left"]
 margin_right = 230.0
 margin_bottom = 106.0
 rect_min_size = Vector2( 0, 102 )
@@ -259,14 +263,14 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/MarginContainerLeft/Left/UndoRedo"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/EditorMain/MarginContainerLeft/Left/UndoRedo"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = -7.0
 rect_min_size = Vector2( 230, 104 )
 mouse_filter = 2
 
-[node name="Undo" type="Control" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer"]
+[node name="Undo" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left/UndoRedo/HBoxContainer"]
 margin_right = 102.0
 margin_bottom = 106.0
 rect_min_size = Vector2( 102, 102 )
@@ -277,20 +281,20 @@ OnHover = NodePath("Hover")
 OnNormal = NodePath("Normal")
 keepState = false
 
-[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Undo"]
+[node name="Normal" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Undo"]
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource( 15 )
 
-[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Undo"]
+[node name="Hover" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Undo"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 texture = ExtResource( 25 )
 
-[node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer"]
+[node name="Empty" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left/UndoRedo/HBoxContainer"]
 margin_left = 106.0
 margin_right = 124.0
 margin_bottom = 106.0
@@ -298,7 +302,7 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Redo" type="Control" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer"]
+[node name="Redo" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left/UndoRedo/HBoxContainer"]
 margin_left = 128.0
 margin_right = 230.0
 margin_bottom = 106.0
@@ -310,20 +314,20 @@ OnHover = NodePath("Hover")
 OnNormal = NodePath("Normal")
 keepState = false
 
-[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Redo"]
+[node name="Normal" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Redo"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 texture = ExtResource( 19 )
 
-[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Redo"]
+[node name="Hover" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/UndoRedo/HBoxContainer/Redo"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 texture = ExtResource( 26 )
 
-[node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left"]
+[node name="Empty" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left"]
 margin_top = 110.0
 margin_right = 230.0
 margin_bottom = 216.0
@@ -331,7 +335,7 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ToolList" type="Control" parent="UI/MarginContainerLeft/Left"]
+[node name="ToolList" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left"]
 margin_top = 220.0
 margin_right = 230.0
 margin_bottom = 740.0
@@ -340,7 +344,7 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/MarginContainerLeft/Left/ToolList"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList"]
 anchor_bottom = 1.0
 margin_right = 102.0
 margin_bottom = -8.0
@@ -348,7 +352,7 @@ rect_min_size = Vector2( 102, 0 )
 mouse_filter = 2
 size_flags_vertical = 3
 
-[node name="Add" type="Control" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+[node name="Add" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_right = 102.0
 margin_bottom = 102.0
 rect_min_size = Vector2( 102, 102 )
@@ -358,20 +362,20 @@ script = ExtResource( 13 )
 OnHover = NodePath("Hover")
 OnNormal = NodePath("Normal")
 
-[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Add"]
+[node name="Normal" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer/Add"]
 visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource( 14 )
 
-[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Add"]
+[node name="Hover" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer/Add"]
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource( 27 )
 
-[node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+[node name="Empty" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_top = 106.0
 margin_right = 102.0
 margin_bottom = 130.0
@@ -380,7 +384,7 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Remove" type="Control" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+[node name="Remove" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_top = 134.0
 margin_right = 102.0
 margin_bottom = 236.0
@@ -391,20 +395,20 @@ script = ExtResource( 13 )
 OnHover = NodePath("Hover")
 OnNormal = NodePath("Normal")
 
-[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Remove"]
+[node name="Normal" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer/Remove"]
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource( 23 )
 
-[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Remove"]
+[node name="Hover" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer/Remove"]
 visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource( 28 )
 
-[node name="Empty4" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+[node name="Empty4" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_top = 240.0
 margin_right = 102.0
 margin_bottom = 288.0
@@ -415,7 +419,7 @@ size_flags_vertical = 3
 texture = ExtResource( 20 )
 stretch_mode = 4
 
-[node name="Color" type="Control" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+[node name="Color" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_top = 292.0
 margin_right = 102.0
 margin_bottom = 394.0
@@ -426,20 +430,20 @@ script = ExtResource( 13 )
 OnHover = NodePath("Hover")
 OnNormal = NodePath("Normal")
 
-[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Color"]
+[node name="Normal" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer/Color"]
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource( 21 )
 
-[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer/Color"]
+[node name="Hover" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer/Color"]
 visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource( 29 )
 
-[node name="Empty3" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+[node name="Empty3" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_top = 398.0
 margin_right = 102.0
 margin_bottom = 446.0
@@ -450,7 +454,7 @@ size_flags_vertical = 3
 texture = ExtResource( 20 )
 stretch_mode = 4
 
-[node name="ColorPicker" type="TextureRect" parent="UI/MarginContainerLeft/Left/ToolList/VBoxContainer"]
+[node name="ColorPicker" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/ToolList/VBoxContainer"]
 margin_top = 450.0
 margin_right = 102.0
 margin_bottom = 552.0
@@ -460,7 +464,7 @@ size_flags_vertical = 3
 texture = ExtResource( 16 )
 script = ExtResource( 13 )
 
-[node name="Empty2" type="Control" parent="UI/MarginContainerLeft/Left"]
+[node name="Empty2" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left"]
 margin_top = 744.0
 margin_right = 230.0
 margin_bottom = 850.0
@@ -468,7 +472,7 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="SelectMode" type="Control" parent="UI/MarginContainerLeft/Left"]
+[node name="SelectMode" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left"]
 margin_top = 854.0
 margin_right = 230.0
 margin_bottom = 960.0
@@ -477,13 +481,13 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/MarginContainerLeft/Left/SelectMode"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/EditorMain/MarginContainerLeft/Left/SelectMode"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_min_size = Vector2( 230, 104 )
 mouse_filter = 2
 
-[node name="TextureRect" type="Control" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
+[node name="TextureRect" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
 margin_right = 102.0
 margin_bottom = 106.0
 rect_min_size = Vector2( 102, 102 )
@@ -493,20 +497,20 @@ script = ExtResource( 13 )
 OnHover = NodePath("Hover")
 OnNormal = NodePath("Normal")
 
-[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect"]
+[node name="Normal" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect"]
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource( 17 )
 
-[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect"]
+[node name="Hover" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect"]
 visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource( 31 )
 
-[node name="Empty" type="Control" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
+[node name="Empty" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
 margin_left = 106.0
 margin_right = 124.0
 margin_bottom = 106.0
@@ -514,7 +518,7 @@ mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="TextureRect2" type="Control" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
+[node name="TextureRect2" type="Control" parent="UI/EditorMain/MarginContainerLeft/Left/SelectMode/HBoxContainer"]
 margin_left = 128.0
 margin_right = 230.0
 margin_bottom = 106.0
@@ -525,20 +529,20 @@ script = ExtResource( 13 )
 OnHover = NodePath("Hover")
 OnNormal = NodePath("Normal")
 
-[node name="Normal" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect2"]
+[node name="Normal" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect2"]
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource( 24 )
 
-[node name="Hover" type="TextureRect" parent="UI/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect2"]
+[node name="Hover" type="TextureRect" parent="UI/EditorMain/MarginContainerLeft/Left/SelectMode/HBoxContainer/TextureRect2"]
 visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource( 30 )
 
-[node name="MarginContainerRight" type="MarginContainer" parent="UI"]
+[node name="MarginContainerRight" type="MarginContainer" parent="UI/EditorMain"]
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -548,14 +552,14 @@ custom_constants/margin_right = 60
 custom_constants/margin_top = 60
 custom_constants/margin_bottom = 60
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/MarginContainerRight"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/EditorMain/MarginContainerRight"]
 margin_top = 60.0
 margin_right = 114.0
 margin_bottom = 1020.0
 rect_min_size = Vector2( 0, 102 )
 mouse_filter = 2
 
-[node name="TextureRect" type="TextureRect" parent="UI/MarginContainerRight/VBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/EditorMain/MarginContainerRight/VBoxContainer"]
 margin_right = 114.0
 margin_bottom = 102.0
 rect_min_size = Vector2( 102, 102 )
@@ -564,7 +568,7 @@ size_flags_horizontal = 3
 texture = ExtResource( 18 )
 script = ExtResource( 13 )
 
-[node name="Control" type="Control" parent="UI/MarginContainerRight/VBoxContainer"]
+[node name="Control" type="Control" parent="UI/EditorMain/MarginContainerRight/VBoxContainer"]
 margin_top = 106.0
 margin_right = 114.0
 margin_bottom = 130.0
@@ -572,7 +576,7 @@ rect_min_size = Vector2( 0, 24 )
 mouse_filter = 2
 size_flags_horizontal = 3
 
-[node name="TextureRect2" type="TextureRect" parent="UI/MarginContainerRight/VBoxContainer"]
+[node name="TextureRect2" type="TextureRect" parent="UI/EditorMain/MarginContainerRight/VBoxContainer"]
 margin_top = 134.0
 margin_right = 114.0
 margin_bottom = 236.0
@@ -582,7 +586,7 @@ size_flags_horizontal = 3
 texture = ExtResource( 12 )
 script = ExtResource( 13 )
 
-[node name="Control2" type="Control" parent="UI/MarginContainerRight/VBoxContainer"]
+[node name="Control2" type="Control" parent="UI/EditorMain/MarginContainerRight/VBoxContainer"]
 margin_top = 240.0
 margin_right = 114.0
 margin_bottom = 264.0
@@ -590,7 +594,7 @@ rect_min_size = Vector2( 0, 24 )
 mouse_filter = 2
 size_flags_horizontal = 3
 
-[node name="TextureRect3" type="TextureRect" parent="UI/MarginContainerRight/VBoxContainer"]
+[node name="TextureRect3" type="TextureRect" parent="UI/EditorMain/MarginContainerRight/VBoxContainer"]
 margin_top = 268.0
 margin_right = 114.0
 margin_bottom = 370.0
@@ -600,7 +604,7 @@ size_flags_horizontal = 3
 texture = ExtResource( 10 )
 script = ExtResource( 13 )
 
-[node name="Control3" type="Control" parent="UI/MarginContainerRight/VBoxContainer"]
+[node name="Control3" type="Control" parent="UI/EditorMain/MarginContainerRight/VBoxContainer"]
 margin_top = 374.0
 margin_right = 114.0
 margin_bottom = 398.0
@@ -608,7 +612,7 @@ rect_min_size = Vector2( 0, 24 )
 mouse_filter = 2
 size_flags_horizontal = 3
 
-[node name="TextureRect4" type="TextureRect" parent="UI/MarginContainerRight/VBoxContainer"]
+[node name="TextureRect4" type="TextureRect" parent="UI/EditorMain/MarginContainerRight/VBoxContainer"]
 margin_top = 402.0
 margin_right = 114.0
 margin_bottom = 504.0
@@ -617,6 +621,10 @@ mouse_filter = 2
 size_flags_horizontal = 3
 texture = ExtResource( 22 )
 script = ExtResource( 13 )
+
+[node name="ColorPicker" type="Control" parent="UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 16 )
