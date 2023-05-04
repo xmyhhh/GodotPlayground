@@ -237,6 +237,7 @@ mouse_filter = 2
 [node name="EditorMain" type="Control" parent="UI"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 
 [node name="MarginContainerLeft" type="MarginContainer" parent="UI/EditorMain"]
 margin_right = 330.0
@@ -623,8 +624,10 @@ texture = ExtResource( 22 )
 script = ExtResource( 13 )
 
 [node name="ColorPicker" type="Control" parent="UI"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 16 )
