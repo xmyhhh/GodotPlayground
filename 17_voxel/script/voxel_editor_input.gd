@@ -10,47 +10,66 @@ func isInputPress(event):
 
 var drag_start = null
 var drag_end = null
-var is_pressing = false
+var is_drag = false
 var is_rot = false
+var ray_cast = false
+var zoom_speed = 0.01
+var last_drag_distance = 0.0
+var events = {}
+
 #region Godot Callback 
 func _unhandled_input(event):
-	if (event is InputEventScreenTouch) or(event is InputEventMouseMotion) or (event is InputEventMouseButton and (event.button_index == BUTTON_LEFT or event.button_index == BUTTON_WHEEL_UP or event.button_index == BUTTON_WHEEL_DOWN or event.button_index == BUTTON_MIDDLE)):
+
+	if (event is InputEventScreenTouch) or (event is InputEventScreenDrag) :
 			# 检查事件类型
 			if event is InputEventScreenTouch:
-				# 检查触摸手指数量
-				if event.get_touch_count() == 1:
-					# 处理单指点击事件
-					if event.is_pressed():
-						# 触摸按下时的代码
-						pass
+				if event.pressed:
+					ray_cast = true
+					events[event.index] = event
+				else:
+					if(ray_cast):
+						handle_input_click(event)
+					events.erase(event.index)
+			
+			if(event is InputEventScreenDrag):
+				events[event.index] = event
+				ray_cast = false
+				if events.size() == 1:
+					handle_input_rot(event)
+				if events.size() == 2:
+					var drag_distance = events[0].position.distance_to(events[1].position)
+					if abs(drag_distance - last_drag_distance) > 10.0:
+						var zoom_value = (-zoom_speed) if drag_distance > last_drag_distance else (zoom_speed)
+						handle_input_zoom_screen(zoom_value)
+						last_drag_distance = drag_distance
 					else:
-						pass
-						# 触摸抬起时的代码
-				elif event.get_touch_count() == 2:
-					pass
-					
+						handle_input_drag(event)
+						
+	elif ((event is InputEventMouseMotion) or (event is InputEventMouseButton and (event.button_index == BUTTON_LEFT or event.button_index == BUTTON_WHEEL_UP or event.button_index == BUTTON_WHEEL_DOWN or event.button_index == BUTTON_MIDDLE))):
 			if event is InputEventMouseButton:
 				if(event.button_index == BUTTON_LEFT):
 					if event.is_pressed():
-						is_pressing = true
-						drag_start = event.position  # 记录鼠标按下时的位置
+						is_drag = true
+						drag_start = event.position  
 					elif drag_start != null:
-						is_pressing = false
-						drag_end = event.position  # 记录鼠标释放时的位置
+						is_drag = false
+						drag_end = event.position  
 						if drag_start.distance_to(drag_end) < 0.2:
 							handle_input_click(event)
+							
 				if(event.button_index == BUTTON_WHEEL_UP or event.button_index == BUTTON_WHEEL_DOWN):
-					handle_input_zoom(event)
+					handle_input_zoom_mouse(event)
 					
 				if(event.button_index == BUTTON_MIDDLE):
 					if event.is_pressed():
 						is_rot = true
 					else:
 						is_rot = false
+						
 			if event is InputEventMouseMotion:
 				if(is_rot):
 					handle_input_rot(event)
-				elif(is_pressing):
+				elif(is_drag):
 					handle_input_drag(event)
 #	                # 处理双指滑动和缩放事件
 #	                if event.is_pressed():
@@ -101,12 +120,16 @@ func handle_input_rot(event):
 #	print("rot")
 #	print(event)
 	
-func handle_input_zoom(event):
+func handle_input_zoom_mouse(event):
 	if(event is InputEventMouseButton):
 		if(event.button_index == BUTTON_WHEEL_UP):
 			voxel_editor.editor_camera.distanceOffset += 0.05
 			
 		if(event.button_index == BUTTON_WHEEL_DOWN):
 			voxel_editor.editor_camera.distanceOffset -= 0.05
+			
+func handle_input_zoom_screen(value):
+	voxel_editor.editor_camera.distanceOffset += value
+		
 #	print("zoom")
 #	print(event)
